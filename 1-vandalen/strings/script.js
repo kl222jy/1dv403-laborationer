@@ -7,10 +7,36 @@ window.onload = function(){
 		// Plats för förändring.		
 		// Returnera den konverterade strängen.
 		// Vid fel, kasta ett undantag med ett meddelande till användaren. 
-	
-
-
-
+        
+        var newString = "";
+        if(str !== "")
+        {
+            for(var c in str)
+            {
+                if(str[c] === "a" || str[c] === "A")
+                {
+                    newString += "#";
+                }
+                else if(str[c] === str[c].toUpperCase())
+                {
+                    newString += str[c].toLowerCase();
+                }
+                else if(str[c] === str[c].toLowerCase())
+                {
+                     newString += str[c].toUpperCase();
+                }
+                else
+                {
+                    newString += str[c];
+                }
+            }
+            
+            return newString;
+        }
+        else
+        {
+            throw "String was empty";               //av någon anledning blir det här undefined.. vet inte varför
+        }
 
 
 
@@ -30,7 +56,7 @@ window.onload = function(){
 		p.classList.remove( "error");
 
 		try {
-			var answer = convertString(input.value) // Läser in texten från textrutan och skickar till funktionen "convertString"
+			var answer = convertString(input.value); // Läser in texten från textrutan och skickar till funktionen "convertString"
 			p.innerHTML = answer;		// Skriver ut texten från arrayen som skapats i funktionen.	
 		} catch (error){
 			p.classList.add( "error"); // Växla CSS-klass, IE10+
