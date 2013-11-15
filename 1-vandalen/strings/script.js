@@ -35,7 +35,10 @@ window.onload = function(){
         }
         else
         {
-            throw "String was empty";               //av någon anledning blir det här undefined.. vet inte varför
+            throw {
+                name: "ArgumentException",
+                message: "Du skrev aldrig något i fältet."
+            };
         }
 
 
