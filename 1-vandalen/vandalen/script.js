@@ -7,7 +7,7 @@ var makePerson = function (persArr) {
     //Start felhantering
     //Kontrollfunktion för att ett objekt följer mönstret Object{name=string, age=number} (born=string med för att testerna ska fungera).
     objectCheck = function (element, index, array) {
-        return (typeof element.name === "string" && (typeof element.age === "number" || typeof element.born === "string"));
+        return (typeof element.name === "string" && ((typeof element.age === "number" && element.age % 1 === 0) || typeof element.born === "string"));
     };
     
     //Kontrollerar att indata är en array
@@ -32,10 +32,10 @@ var makePerson = function (persArr) {
     
     //Sortering av indata till separata arrayer, samt beräkning av summa för åldrar
     persArr.forEach(function (person) {
-        names[names.length] = person.name;
-        ages[ages.length] = person.age;
+        names.push(person.name);
+        ages.push(person.age);
         agesSum += person.age;
-    }, Object);
+    });
     
     //Jämförelsefunktion; implementerad eftersom standardsorteringen inte kan hantera lokala tecken
     compare = function (a, b) {
@@ -43,12 +43,12 @@ var makePerson = function (persArr) {
     };
     
     names.sort(compare);
-    ages.sort();
+//    ages.sort();
     
     //Beräkningar för utdata
     personStats = {
-        minAge: ages[0],
-        maxAge: ages[ages.length - 1],
+        minAge: Math.min.apply(null, ages),         //ages[0],                      //Förmodligen är sort och hämtning av första och sista värde effektivare, men här ska det provas js funktioner =)
+        maxAge: Math.max.apply(null, ages),         //ages[ages.length - 1],
         averageAge: Math.round(agesSum / ages.length),
         names: names.join(", ")
     };
@@ -56,8 +56,11 @@ var makePerson = function (persArr) {
     return personStats;
 };
 
-//var data = [{name: "John Häggerud", age: 37}, {name: "Johan Leitet", age: 36}, {name: "Mats Loock", age: 46}];
-//
-//var result = makePerson(data);
-//
-//console.log(result);
+////var data = [{name: "John Häggerud", age: 37.5}, {name: "Johan Leitet", age: 36}, {name: "Mats Loock", age: 46}];
+////var data = "test";
+//var data = ["namn", 9];
+//try {
+//    var result = makePerson(data);
+//} catch (err) {
+//    console.log(err.message);
+//}
