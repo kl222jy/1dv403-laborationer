@@ -1,44 +1,35 @@
-/*global window, document, console, Message */
 "use strict";
+/*global window, document, console, Message */
 
 
 var MessageBoard = function (name) {
-    var elem, create, that, messages;
+    var elem, renderMsgBox, that, renderMessage, renderMessages;
     
     this.name = name;
     
-    messages = [];
-//    var i, mess1 = new Message("Testmeddelande1", new Date()),
-//        mess2 = new Message("Testmeddelande2", new Date()),
-//        mess3 = new Message("Testmeddelande3", new Date()),
-//        messages = [mess1, mess2, mess3];
-//    console.log(mess1.toString());
-//    mess1.text = "Testmeddelande\n då provar vi htmlfunktionen";
-//    console.log(mess1.htmlText());
-//    messages.push(new Message("tillagt med push", new Date()));
-//                  
-//    for (i = 0; i < messages.length; i += 1) {
-//        console.log(messages[i].text);        //fungerar inte, men alert gör?
-//    }
-    this.sendMessage = function () {
-        var input = document.querySelector("#" + name + " textarea").value;
-        messages.push(new Message(input, new Date()));
-        for (var i = 0; i < messages.length; i += 1) {
-        console.log(messages[i].toString());
-        }
-    };
+    this.messages = [];
+
     that = this;
+    this.sendMessage = function () {
+        var input = document.querySelector("#" + name + " textarea").value,
+            messages = that.messages;
+        
+        messages.push(new Message(input, new Date()));
+        renderMessages();
+    };
+    
     elem = function (elemName, elemClass, elemId) {
         var elem = document.createElement(elemName);
-        if (elemClass !== null) {
+        if (elemClass) {
             elem.className = elemClass;
         }
-        if (elemId !== null) {
+        if (elemId) {
             elem.setAttribute("id", elemId);
         }
         return elem;
     };
-    create = function (name) {
+    
+    renderMsgBox = function (name) {
         var boardFragment = document.createDocumentFragment(),
             article = elem("article", "msgBoard", name),
             msgSection = elem("section", "msgBox"),
@@ -47,47 +38,93 @@ var MessageBoard = function (name) {
             textarea = elem("textarea"),
             content,
             main,
-            inputButton;
+            inputButton,
+            header,
+            msgCountElement;
+
+        msgCountElement = elem("p", "msgCounter");
+        msgCountElement.appendChild(document.createTextNode("Antal meddelanden: 0"));
+
+        
+        header = elem("header", "msgBoxHeader");
+        header.appendChild(document.createTextNode(name));
+        
+        article.setAttribute("draggable", "true");
         
         inputButton = elem("input");
         inputButton.type = "button";
         inputButton.value = "skriv";
-        inputButton.onclick = function (e) { that.sendMessage(); return false; };
+        inputButton.onclick = function (e) { that.sendMessage(); document.querySelector("#" + that.name + " textarea").value = ""; return false; };
         
-        content = boardFragment.appendChild(article).appendChild(msgSection);
-        content = content.parentElement.appendChild(inputSection).appendChild(form).appendChild(textarea);
-        content = content.parentElement.appendChild(inputButton);
+        
+        boardFragment = boardFragment.appendChild(article);
+        boardFragment.appendChild(header);
+        boardFragment.appendChild(msgSection);
+//        boardFragment = boardFragment.appendChild(inputSection);
+//        boardFragment.appendChild(form).appendChild(textarea).parentElement.appendChild(inputButton);
+//        boardFragment.appendChild(msgCountElement);
+        boardFragment.appendChild(inputSection).appendChild(form).appendChild(textarea).parentElement.appendChild(inputButton);
+//        boardFragment.appendChild(msgCountElement);
         
         main = document.querySelector("main");
         main.appendChild(boardFragment);
+    };
 
-        console.log(that);
+    renderMessage = function (message, date) {
+        var msgItem = elem("article", "msgItem"),
+            msgContent = elem("section", "msgContent"),
+            footer = elem("footer", "msgInfo"),
+            msgFragment = document.createDocumentFragment(),
+            msgTextNode = document.createTextNode(message),
+            msgDateNode = document.createTextNode(date),
+            content,
+            msgBox;
+        
+        
+        msgFragment = msgFragment.appendChild(msgItem);
+        msgFragment.appendChild(msgContent).appendChild(msgTextNode);
+        msgFragment.appendChild(footer).appendChild(msgDateNode);
+
+        return msgFragment;
+    };
+    
+    renderMessages = function () {
+        var i, message, msgItems, msgBox, msgCounter, msgCountElement, msgList = document.createDocumentFragment();
+
+        for (i = 0; i < that.messages.length; i += 1) {
+            message = renderMessage(that.messages[i].htmlText(), that.messages[i].date.toTimeString());
+            msgList.appendChild(message);
+        }
+        msgBox = document.querySelector("#" + that.name + " .msgBox");
+        msgBox.innerHTML = "";
+        msgBox.appendChild(msgList);
+        
+        msgBox.scrollTop = msgBox.scrollHeight;
+        
+//        msgBox.replaceChild(that.messages.length, msgBox.querySelector("#" + that.name + " .msgCounter").TEXT_NODE);
+
+        msgCountElement = elem("p", "msgCounter");
+        msgCountElement.appendChild(document.createTextNode("Antal meddelanden: " + that.messages.length));
+        
+        if (document.querySelector("#" + that.name + " .msgCounter")) {
+//            document.querySelector("#" + that.name + " .msgCounter").text = "blubb";
+//            msgBox.querySelector("msgCounter")
+//            document.removeChild(document.querySelector(".msgCounter").childNodes);
+//            document.querySelector("#" + that.name + " .inputBox").appendChild(msgCountElement);
+//            msgBox.querySelector(".msgCounter").replace("/d", that.messages.length);
+            document.querySelector("#" + that.name + " .inputBox").removeChild(document.querySelector("#" + that.name + " .msgCounter"));
+            document.querySelector("#" + that.name + " .inputBox").appendChild(msgCountElement);
+        } else {
+            document.querySelector("#" + that.name + " .inputBox").appendChild(msgCountElement);
+        }
     };
 
     
-    
-
-    
-    create(name);
+    renderMsgBox(name);
     
 };
-
-
-
 
 window.onload = function () {
     new MessageBoard("messageBoard1");
     new MessageBoard("messageBoard2");
-    
 };
-
-
-
-
-//var fragment = document.createDocumentFragment();
-//
-//var contents = fragment.appendChild(document.createElement('blockquote'));
-//contents = contents.appendChild(document.createElement('p'));
-//contents.appendChild(document.createTextNode('Always two there are'));
-//
-//element.appendChild(fragment);
