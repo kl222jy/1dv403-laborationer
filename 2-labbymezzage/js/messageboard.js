@@ -1,5 +1,5 @@
 "use strict";
-/*global window, document, console, Message */
+/*global window, document, alert, console, Message */
 
 
 var MessageBoard = function (name) {
@@ -18,6 +18,10 @@ var MessageBoard = function (name) {
         renderMessages();
     };
     
+    this.removeMessage = function (index) {
+        that.messages.splice(index, 1);
+        renderMessages();
+    };
     elem = function (elemName, elemClass, elemId) {
         var elem = document.createElement(elemName);
         if (elemClass) {
@@ -70,20 +74,38 @@ var MessageBoard = function (name) {
         main.appendChild(boardFragment);
     };
 
-    renderMessage = function (message, date) {
+    renderMessage = function (message, date, index) {
         var msgItem = elem("article", "msgItem"),
             msgContent = elem("section", "msgContent"),
             footer = elem("footer", "msgInfo"),
             msgFragment = document.createDocumentFragment(),
             msgTextNode = document.createTextNode(message),
             msgDateNode = document.createTextNode(date),
+            msgDelete = elem("img", "imgDelete"),
+            msgTime = elem("img", "imgTime"),
             content,
             msgBox;
+        
+//        msgDelete.href = "../img/delete.png";
+        msgDelete.setAttribute("src", "img/delete.png");
+        msgDelete.alt = "Delete";
+        msgDelete.onclick = function () {
+            that.removeMessage(index);
+        };
+        
+//        msgTime.href = "../img/time.png";
+        msgTime.setAttribute("src", "img/time.png");
+        msgTime.alt = "Time";
+        msgTime.onclick = function () {
+            alert(that.messages[index].dateText());
+        };
         
         
         msgFragment = msgFragment.appendChild(msgItem);
         msgFragment.appendChild(msgContent).appendChild(msgTextNode);
         msgFragment.appendChild(footer).appendChild(msgDateNode);
+        msgFragment.appendChild(msgDelete);
+        msgFragment.appendChild(msgTime);
 
         return msgFragment;
     };
@@ -92,7 +114,7 @@ var MessageBoard = function (name) {
         var i, message, msgItems, msgBox, msgCounter, msgCountElement, msgList = document.createDocumentFragment();
 
         for (i = 0; i < that.messages.length; i += 1) {
-            message = renderMessage(that.messages[i].htmlText(), that.messages[i].date.toTimeString());
+            message = renderMessage(that.messages[i].htmlText(), that.messages[i].date.toTimeString(), i);
             msgList.appendChild(message);
         }
         msgBox = document.querySelector("#" + that.name + " .msgBox");

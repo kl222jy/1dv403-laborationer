@@ -21,5 +21,5 @@ Message.prototype.htmlText = function () {
 };
 
 Message.prototype.dateText = function () {
-    return this.date.toDateString;
+    return "Inlägget skapades " + this.date.toLocaleDateString() + " " + this.date.toLocaleTimeString();       //this.date.toDateString() + " " + this.date.toTimeString();
 };
