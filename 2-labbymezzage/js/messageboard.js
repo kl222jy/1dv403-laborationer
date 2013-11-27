@@ -1,8 +1,9 @@
 "use strict";
-/*global window, document, getComputedStyle, alert, confirm, console, Message */
+/*global window, event, document, getComputedStyle, alert, confirm, console, Message */
 
+var MessageSystem = MessageSystem || {};
 
-var MessageBoard = function (name) {
+MessageSystem.MessageBoard = function (name) {
     var elem, renderMsgBox, that, renderMessage, renderMessages;
     
     this.name = name;
@@ -14,7 +15,7 @@ var MessageBoard = function (name) {
         var input = document.querySelector("#" + name + " textarea").value,
             messages = that.messages;
         
-        messages.push(new Message(input, new Date()));
+        messages.push(new MessageSystem.Message(input, new Date()));
         renderMessages();
     };
     
@@ -48,47 +49,55 @@ var MessageBoard = function (name) {
             header,
             msgCountElement,
             offsetX,
-            offsetY;
+            offsetY,
+            move;
 
         msgCountElement = elem("p", "msgCounter");
         msgCountElement.appendChild(document.createTextNode("Antal meddelanden: 0"));
-
         
         header = elem("header", "msgBoxHeader");
         header.appendChild(document.createTextNode(name));
         
-//        article.setAttribute("draggable", "true");
-//        article.ondragstart = function (e) {
-//            var css = getComputedStyle(e.target);
-//            e.dataTransfer.setData("text/plain", (parseInt(css.getPropertyValue("left"), 10) - e.clientX) + ", " + (parseInt(css.getPropertyValue("top"), 10) - e.clientY));
-//        };
-//        article.ondrop = function (e) {
-//            var offset = e.dataTransfer.getData("text/plain").split(", ");
-//            this.style.left = (e.clientX + parseInt(offset[0], 10)) + 'px';
-//            this.style.top = (e.clientY + parseInt(offset[1], 10)) + 'px';
-//            e.preventDefault();
-//            return false;
-//        };
-//        article.dragover = function (e) {
-//            e.preventDefault();
-//        };
-   
+        article.setAttribute("style", "z-index: " + MessageSystem.counter);
+        
+        move = function (e) {
+            e = e || event;
+            article.setAttribute("style", "left: " + (offsetX + e.clientX) + "px; top: " + (offsetY + e.clientY) + "px; z-index: " + MessageSystem.counter);
+        };
+
+        article.onmousedown = function (e) {
+            e = e || event;
+            var css = getComputedStyle(article);
+            offsetX = parseInt(css.getPropertyValue("left"), 10) - e.clientX;
+            offsetY = parseInt(css.getPropertyValue("top"), 10) - e.clientY;
+            MessageSystem.counter += 1;
+//            article.setAttribute("z-index", MessageSystem.counter);
+            window.addEventListener("mousemove", move, false);
+        };
+        article.onmouseup = function (e) {
+            e = e || event;
+            window.removeEventListener("mousemove", move, false);
+        };
+        
         inputButton = elem("input");
         inputButton.type = "button";
         inputButton.value = "skriv";
-        inputButton.onclick = function (e) { that.sendMessage(); document.querySelector("#" + that.name + " textarea").value = ""; return false; };
-        textarea.onkeypress = function (e2) {
-            if (e2.keyCode === 13  && (!e2.shiftKey)) {
+        inputButton.onclick = function (e) {
+            e = e || event;
+            that.sendMessage();
+            document.querySelector("#" + that.name + " textarea").value = "";
+            return false;
+        };
+        textarea.onkeypress = function (e) {
+            e = e || event;
+            if (e.keyCode === 13  && (!e.shiftKey)) {
                 that.sendMessage();
                 document.querySelector("#" + that.name + " textarea").value = "";
                 return false;
             } else {
-                var e = window.event;
+                e = window.event;
             }
         };
-                
-                
-        
         
         boardFragment = boardFragment.appendChild(article);
         boardFragment.appendChild(header);
@@ -106,28 +115,32 @@ var MessageBoard = function (name) {
             msgFragment = document.createDocumentFragment(),
             msgTextNode = document.createTextNode(message),
             msgDateNode = document.createTextNode(date),
+            msgADelete = elem("a", "imgDelete"),
             msgDelete = elem("img", "imgDelete"),
+            msgATime = elem("a", "imgTime"),
             msgTime = elem("img", "imgTime"),
             content,
             msgBox;
-
+        
+        msgADelete.setAttribute("href", "#");
         msgDelete.setAttribute("src", "img/delete.png");
         msgDelete.alt = "Delete";
-        msgDelete.onclick = function () {
+        msgADelete.onclick = function () {
             that.removeMessage(index);
         };
 
+        msgATime.setAttribute("href", "#");
         msgTime.setAttribute("src", "img/time.png");
         msgTime.alt = "Time";
-        msgTime.onclick = function () {
+        msgATime.onclick = function () {
             alert(that.messages[index].dateText());
         };
         
         msgContent.innerHTML = message;
 
         msgFragment = msgFragment.appendChild(msgItem);
-        msgFragment.appendChild(msgDelete);
-        msgFragment.appendChild(msgTime);
+        msgFragment.appendChild(msgADelete).appendChild(msgDelete);
+        msgFragment.appendChild(msgATime).appendChild(msgTime);
         msgFragment.appendChild(msgContent);         //.innerHTML(message);        //.innerHTML(message);         //.appendChild(msgTextNode); 
         msgFragment.appendChild(footer).appendChild(msgDateNode);
 
@@ -164,22 +177,27 @@ var MessageBoard = function (name) {
     
 };
 
-window.onload = function () {
-//    new MessageBoard("messageBoard1");
-//    new MessageBoard("messageBoard2");
-    var i = 1,
-        menuItems = document.querySelectorAll("nav img");
+MessageSystem.counter = 1;
+MessageSystem.boardID = 1;
+
+MessageSystem.init = function () {
+    var menuItems = document.querySelectorAll("nav a");
     
     menuItems[0].onclick = function () {
         document.querySelector("main").innerHTML = "";
     };
     menuItems[1].onclick = function () {
-        new MessageBoard("messageBoard" + i);
-        i += 1;
+        new MessageSystem.MessageBoard("messageBoard" + MessageSystem.boardID);
+        MessageSystem.boardID += 1;
     };
     menuItems[2].onclick = function () {
         alert("Inte tillgänglig förrän efter nästa laboration");
     };
+};
+
+
+window.onload = function () {
+    MessageSystem.init();
 };
 
 
