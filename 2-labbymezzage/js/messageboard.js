@@ -1,5 +1,5 @@
 "use strict";
-/*global window, document, alert, console, Message */
+/*global window, document, getComputedStyle, alert, confirm, console, Message */
 
 
 var MessageBoard = function (name) {
@@ -19,8 +19,10 @@ var MessageBoard = function (name) {
     };
     
     this.removeMessage = function (index) {
-        that.messages.splice(index, 1);
-        renderMessages();
+        if (confirm("Är du helt säker på att du vill ta bort meddelandet?")) {
+            that.messages.splice(index, 1);
+            renderMessages();
+        }
     };
     elem = function (elemName, elemClass, elemId) {
         var elem = document.createElement(elemName);
@@ -44,7 +46,9 @@ var MessageBoard = function (name) {
             main,
             inputButton,
             header,
-            msgCountElement;
+            msgCountElement,
+            offsetX,
+            offsetY;
 
         msgCountElement = elem("p", "msgCounter");
         msgCountElement.appendChild(document.createTextNode("Antal meddelanden: 0"));
@@ -53,22 +57,43 @@ var MessageBoard = function (name) {
         header = elem("header", "msgBoxHeader");
         header.appendChild(document.createTextNode(name));
         
-        article.setAttribute("draggable", "true");
-        
+//        article.setAttribute("draggable", "true");
+//        article.ondragstart = function (e) {
+//            var css = getComputedStyle(e.target);
+//            e.dataTransfer.setData("text/plain", (parseInt(css.getPropertyValue("left"), 10) - e.clientX) + ", " + (parseInt(css.getPropertyValue("top"), 10) - e.clientY));
+//        };
+//        article.ondrop = function (e) {
+//            var offset = e.dataTransfer.getData("text/plain").split(", ");
+//            this.style.left = (e.clientX + parseInt(offset[0], 10)) + 'px';
+//            this.style.top = (e.clientY + parseInt(offset[1], 10)) + 'px';
+//            e.preventDefault();
+//            return false;
+//        };
+//        article.dragover = function (e) {
+//            e.preventDefault();
+//        };
+   
         inputButton = elem("input");
         inputButton.type = "button";
         inputButton.value = "skriv";
         inputButton.onclick = function (e) { that.sendMessage(); document.querySelector("#" + that.name + " textarea").value = ""; return false; };
+        textarea.onkeypress = function (e2) {
+            if (e2.keyCode === 13  && (!e2.shiftKey)) {
+                that.sendMessage();
+                document.querySelector("#" + that.name + " textarea").value = "";
+                return false;
+            } else {
+                var e = window.event;
+            }
+        };
+                
+                
         
         
         boardFragment = boardFragment.appendChild(article);
         boardFragment.appendChild(header);
         boardFragment.appendChild(msgSection);
-//        boardFragment = boardFragment.appendChild(inputSection);
-//        boardFragment.appendChild(form).appendChild(textarea).parentElement.appendChild(inputButton);
-//        boardFragment.appendChild(msgCountElement);
         boardFragment.appendChild(inputSection).appendChild(form).appendChild(textarea).parentElement.appendChild(inputButton);
-//        boardFragment.appendChild(msgCountElement);
         
         main = document.querySelector("main");
         main.appendChild(boardFragment);
@@ -85,28 +110,28 @@ var MessageBoard = function (name) {
             msgTime = elem("img", "imgTime"),
             content,
             msgBox;
-        
-//        msgDelete.href = "../img/delete.png";
+
         msgDelete.setAttribute("src", "img/delete.png");
         msgDelete.alt = "Delete";
         msgDelete.onclick = function () {
             that.removeMessage(index);
         };
-        
-//        msgTime.href = "../img/time.png";
+
         msgTime.setAttribute("src", "img/time.png");
         msgTime.alt = "Time";
         msgTime.onclick = function () {
             alert(that.messages[index].dateText());
         };
         
-        
+        msgContent.innerHTML = message;
+
         msgFragment = msgFragment.appendChild(msgItem);
-        msgFragment.appendChild(msgContent).appendChild(msgTextNode);
-        msgFragment.appendChild(footer).appendChild(msgDateNode);
         msgFragment.appendChild(msgDelete);
         msgFragment.appendChild(msgTime);
+        msgFragment.appendChild(msgContent);         //.innerHTML(message);        //.innerHTML(message);         //.appendChild(msgTextNode); 
+        msgFragment.appendChild(footer).appendChild(msgDateNode);
 
+        
         return msgFragment;
     };
     
@@ -114,7 +139,7 @@ var MessageBoard = function (name) {
         var i, message, msgItems, msgBox, msgCounter, msgCountElement, msgList = document.createDocumentFragment();
 
         for (i = 0; i < that.messages.length; i += 1) {
-            message = renderMessage(that.messages[i].htmlText(), that.messages[i].date.toTimeString(), i);
+            message = renderMessage(that.messages[i].htmlText(), that.messages[i].date.toLocaleTimeString(), i);
             msgList.appendChild(message);
         }
         msgBox = document.querySelector("#" + that.name + " .msgBox");
@@ -122,18 +147,11 @@ var MessageBoard = function (name) {
         msgBox.appendChild(msgList);
         
         msgBox.scrollTop = msgBox.scrollHeight;
-        
-//        msgBox.replaceChild(that.messages.length, msgBox.querySelector("#" + that.name + " .msgCounter").TEXT_NODE);
 
         msgCountElement = elem("p", "msgCounter");
         msgCountElement.appendChild(document.createTextNode("Antal meddelanden: " + that.messages.length));
         
         if (document.querySelector("#" + that.name + " .msgCounter")) {
-//            document.querySelector("#" + that.name + " .msgCounter").text = "blubb";
-//            msgBox.querySelector("msgCounter")
-//            document.removeChild(document.querySelector(".msgCounter").childNodes);
-//            document.querySelector("#" + that.name + " .inputBox").appendChild(msgCountElement);
-//            msgBox.querySelector(".msgCounter").replace("/d", that.messages.length);
             document.querySelector("#" + that.name + " .inputBox").removeChild(document.querySelector("#" + that.name + " .msgCounter"));
             document.querySelector("#" + that.name + " .inputBox").appendChild(msgCountElement);
         } else {
@@ -147,6 +165,21 @@ var MessageBoard = function (name) {
 };
 
 window.onload = function () {
-    new MessageBoard("messageBoard1");
-    new MessageBoard("messageBoard2");
+//    new MessageBoard("messageBoard1");
+//    new MessageBoard("messageBoard2");
+    var i = 1,
+        menuItems = document.querySelectorAll("nav img");
+    
+    menuItems[0].onclick = function () {
+        document.querySelector("main").innerHTML = "";
+    };
+    menuItems[1].onclick = function () {
+        new MessageBoard("messageBoard" + i);
+        i += 1;
+    };
+    menuItems[2].onclick = function () {
+        alert("Inte tillgänglig förrän efter nästa laboration");
+    };
 };
+
+
