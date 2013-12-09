@@ -9,9 +9,6 @@ KLOS.Memory = function () {
     boardSizeY = 4;
     
     cells = KLOS.Memory.RandomGenerator.getPictureArray(boardSizeY, boardSizeX);
-    board = function () {
-    
-    };
     cell = function (cellIndex) {
         var aTag, imgTag;
         
@@ -19,8 +16,48 @@ KLOS.Memory = function () {
         aTag.setAttribute("href", "#");
         
         imgTag = document.createElement("img");
-        imgTag.setAttribute("href", cells[cellIndex] + ".png");
+        imgTag.setAttribute("src", "pics/0.png");
+        
+        imgTag.onclick = function (e) {
+            e = e || event;
+            e.preventDefault();
+
+            imgTag.setAttribute("src", "pics/" + cells[cellIndex] + ".png");
+            
+            setTimeout(function () {
+                imgTag.setAttribute("src", "pics/0.png");
+            }, 1000);
+            
+            
+        };
         
         aTag.appendChild(imgTag);
+        
+        return aTag;
     };
+    board = function () {
+        var containerTag, boardTag, resultsTag, cellIndex;
+        
+        containerTag = document.createElement("article");
+        containerTag.setAttribute("class", "memory-container");
+        
+        boardTag = document.createElement("section");
+        boardTag.setAttribute("class", "memory-board");
+        
+        for (cellIndex = 0; cellIndex < cells.length; cellIndex += 1) {
+            boardTag.appendChild(cell(cellIndex));
+        }
+        
+        resultsTag = document.createElement("section");
+        resultsTag.setAttribute("class", "memory-results");
+        
+        containerTag.appendChild(boardTag);
+        containerTag.appendChild(resultsTag);
+        
+        return containerTag;
+        
+    };
+    
+    console.log(board());
+    document.querySelector("main").appendChild(board());
 };

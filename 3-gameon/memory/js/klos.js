@@ -23,7 +23,12 @@ KLOS.menu = function () {
 
 KLOS.EventUtil = {};
 
-KLOS.WindowManager = {};
+KLOS.WindowManager = {
+    //instanserna som startas från menyn bör startas här och fungera som container
+    //då kan all fönsterhantering hamna här
+    //det som skapas måste då pekas om lite hur det hamnar i dokumentet
+    //alternativt kan fönsterhanteringsfunktionalitet läggas här och köras inifrån de andra
+};
 
 window.onload = function () {
     KLOS.menu();
