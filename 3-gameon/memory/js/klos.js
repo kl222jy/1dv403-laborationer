@@ -3,6 +3,8 @@
 
 var KLOS = KLOS || {};
 
+KLOS.MemoryGameID = 0;
+
 KLOS.menu = function () {
     var menuItems = document.querySelectorAll("nav a");
     
@@ -14,7 +16,8 @@ KLOS.menu = function () {
         KLOS.MessageBoardID += 1;
     };
     menuItems[2].onclick = function () {
-        KLOS.Memory();
+        new KLOS.Memory(KLOS.MemoryGameID);
+        KLOS.MemoryGameID += 1;
     };
     menuItems[3].onclick = function () {
         alert("Inte tillgänglig förrän efter nästa laboration");
