@@ -70,7 +70,7 @@ KLOS.MessageBoard = function (name) {
             var css = getComputedStyle(article);
             offsetX = parseInt(css.getPropertyValue("left"), 10) - e.clientX;
             offsetY = parseInt(css.getPropertyValue("top"), 10) - e.clientY;
-            KLOS.MessageBoardCounter += 1;
+            KLOS.counter += 1;
 //            article.setAttribute("z-index", MessageSystem.counter);
             window.addEventListener("mousemove", move, false);
         };

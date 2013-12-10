@@ -33,6 +33,8 @@ KLOS.WindowManager = {
     //alternativt kan fönsterhanteringsfunktionalitet läggas här och köras inifrån de andra
 };
 
+KLOS.counter = 1;
+
 window.onload = function () {
     KLOS.menu();
 };
