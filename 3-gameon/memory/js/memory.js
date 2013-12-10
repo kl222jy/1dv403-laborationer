@@ -8,6 +8,7 @@ KLOS.Memory = function (boardId) {
     boardSizeX = 4;
     boardSizeY = 4;
     firstCell = null;
+    secondCell = null;
     tries = 0;
     foundPairs = 0;
     
@@ -25,6 +26,7 @@ KLOS.Memory = function (boardId) {
         cells.push(new Cell(value));
     });
     
+    //Gömmer celler med fördröjning
     hideCells = function () {
         cells[firstCell].isShown = false;
         cells[secondCell].isShown = false;
@@ -32,41 +34,54 @@ KLOS.Memory = function (boardId) {
         firstCell = null;
         secondCell = null;
     };
-    
-    nullCells = function () {
-        firstCell = null;
-        secondCell = null;
-    };
-    
+
+    //Rendera cell, innehåller också all spellogik(flytta?)
     renderCell = function (index) {
         var  aTag, imgTag;
         aTag = document.createElement("a");
         aTag.setAttribute("href", "#");
         
+        //Spellogik
         aTag.onclick = function () {
+            //Kontrollera att onclick objektet inte redan visas
             if (cells[index].isShown === true) {
                 return false;
             }
             
+            //Tvingar inväntning av hideCells
+            if (secondCell !== null) {
+                return false;
+            }
+            
+            //Visa cell
             cells[index].isShown = true;
+            
             if (firstCell === null) {
                 firstCell = index;
             } else {
                 secondCell = index;
+                
+                //Hittat ett par?
                 if (cells[firstCell].value === cells[index].value) {
                     foundPairs += 1;
                     firstCell = null;
                     secondCell = null;
-//                    setTimeout(nullCells, 1000);
                 } else {
                     tries += 1;
-                    document.querySelector("#memory" + boardId + " section.resultsBoard").innerHTML = "Du har nu misslyckats " + tries + " gånger.";
+                    if (tries === 1) {
+                        document.querySelector("#memory" + boardId + " section.resultsBoard").innerHTML = "Du har nu misslyckats " + tries + " gång.";
+                    } else {
+                        document.querySelector("#memory" + boardId + " section.resultsBoard").innerHTML = "Du har nu misslyckats " + tries + " gånger.";
+                    }
+                    //Gömmer celler efter 1s
                     setTimeout(hideCells, 1000);
                 }
             }
             
+            //Uppdatera spelbrädet
             renderGameBoard();
             
+            //Vunnit?
             if (foundPairs === ((boardSizeX * boardSizeY) / 2)) {
                 document.querySelector("#memory" + boardId + " section.resultsBoard").innerHTML = "Grattis! du vann!, du misslyckades " + tries + " gånger.";
             }
@@ -83,6 +98,7 @@ KLOS.Memory = function (boardId) {
         return aTag;
     };
     
+    //Rendera spelbräde
     renderGameBoard = function () {
         var tableTag, trTag, tdTag, rows, cols, cellIndex, aTag, gameBoard;
         
