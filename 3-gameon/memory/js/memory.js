@@ -3,7 +3,7 @@
 var KLOS = KLOS || {};
 
 KLOS.Memory = function (boardId) {
-    var cellArray, Cell, cells, boardSizeY, boardSizeX, renderGameBoard, renderGame, checkPair, renderCell, firstCell, updateGameBoard, tries, foundPairs;
+    var cellArray, Cell, cells, boardSizeY, boardSizeX, renderGameBoard, renderGame, checkPair, renderCell, firstCell, secondCell, updateGameBoard, tries, foundPairs, hideCells;
     
     boardSizeX = 4;
     boardSizeY = 4;
@@ -25,6 +25,14 @@ KLOS.Memory = function (boardId) {
         cells.push(new Cell(value));
     });
     
+    hideCells = function () {
+        cells[firstCell].isShown = false;
+        cells[secondCell].isShown = false;
+        renderGameBoard();
+        firstCell = null;
+        secondCell = null;
+    };
+    
     renderCell = function (index) {
         var  aTag, imgTag;
         aTag = document.createElement("a");
@@ -35,13 +43,15 @@ KLOS.Memory = function (boardId) {
             if (firstCell === null) {
                 firstCell = index;
             } else {
+                secondCell = index;
                 if (cells[firstCell].value === cells[index].value) {
                     foundPairs += 1;
-                    console.log("samma");
+                    firstCell = null;
+                    secondCell = null;
                 } else {
-                    console.log("inte samma");
+                    tries += 1;
+                    setTimeout(hideCells, 1000);
                 }
-                firstCell = null;
             }
             renderGameBoard();
         };
@@ -57,29 +67,6 @@ KLOS.Memory = function (boardId) {
         return aTag;
     };
     
-//    updateGameBoard = function () {
-//        var tableTag, trTag, tdTag, rows, cols, cellIndex, aTag, gameBoard;
-//        
-//        tableTag = document.createElement("table");
-//        
-//        cellIndex = 0;
-//        
-//        for (rows = 0; rows < boardSizeY; rows += 1) {
-//            trTag = document.createElement("tr");
-//            for (cols = 0; cols < boardSizeX; cols += 1) {
-//                tdTag = document.createElement("td");
-//
-//                tdTag.appendChild(renderCell(cellIndex));
-//                trTag.appendChild(tdTag);
-//                cellIndex += 1;
-//            }
-//            tableTag.appendChild(trTag);
-//        }
-//        
-//        gameBoard = document.querySelector("#memory" + boardId + " section.gameBoard");
-//        gameBoard.appendChild(tableTag);
-//    };
-//    
     renderGameBoard = function () {
         var tableTag, trTag, tdTag, rows, cols, cellIndex, aTag, gameBoard;
         
@@ -111,8 +98,6 @@ KLOS.Memory = function (boardId) {
         
         gameBoardTag = document.createElement("section");
         gameBoardTag.setAttribute("class", "gameBoard");
-        
-//        gameBoardTag.appendChild(renderGameBoard());
         
         resultsBoardTag = document.createElement("section");
         resultsBoardTag.setAttribute("class", "resultsBoard");
