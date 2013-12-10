@@ -3,7 +3,7 @@
 var KLOS = KLOS || {};
 
 KLOS.Memory = function (boardId) {
-    var cellArray, Cell, cells, boardSizeY, boardSizeX, renderGameBoard, renderGame, checkPair, renderCell, firstCell, secondCell, updateGameBoard, tries, foundPairs, hideCells;
+    var cellArray, Cell, cells, boardSizeY, boardSizeX, renderGameBoard, renderGame, checkPair, renderCell, firstCell, secondCell, updateGameBoard, tries, foundPairs, hideCells, nullCells;
     
     boardSizeX = 4;
     boardSizeY = 4;
@@ -33,12 +33,21 @@ KLOS.Memory = function (boardId) {
         secondCell = null;
     };
     
+    nullCells = function () {
+        firstCell = null;
+        secondCell = null;
+    };
+    
     renderCell = function (index) {
         var  aTag, imgTag;
         aTag = document.createElement("a");
         aTag.setAttribute("href", "#");
         
         aTag.onclick = function () {
+            if (cells[index].isShown === true) {
+                return false;
+            }
+            
             cells[index].isShown = true;
             if (firstCell === null) {
                 firstCell = index;
@@ -48,12 +57,18 @@ KLOS.Memory = function (boardId) {
                     foundPairs += 1;
                     firstCell = null;
                     secondCell = null;
+//                    setTimeout(nullCells, 1000);
                 } else {
                     tries += 1;
                     setTimeout(hideCells, 1000);
                 }
             }
+            
             renderGameBoard();
+            
+            if (foundPairs === ((boardSizeX * boardSizeY) / 2)) {
+                document.querySelector("#memory" + boardId + " section.resultsBoard").innerHTML = "Grattis! du vann!, det tog dig " + tries + " försök.";
+            }
         };
         
         imgTag = document.createElement("img");
@@ -95,6 +110,7 @@ KLOS.Memory = function (boardId) {
         containerTag = document.createElement("article");
         containerTag.setAttribute("class", "memoryContainer");
         containerTag.setAttribute("id", "memory" + boardId);
+        containerTag.textContent = "Memory";
         
         gameBoardTag = document.createElement("section");
         gameBoardTag.setAttribute("class", "gameBoard");
