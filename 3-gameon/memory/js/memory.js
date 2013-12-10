@@ -60,6 +60,7 @@ KLOS.Memory = function (boardId) {
 //                    setTimeout(nullCells, 1000);
                 } else {
                     tries += 1;
+                    document.querySelector("#memory" + boardId + " section.resultsBoard").innerHTML = "Du har nu misslyckats " + tries + " gånger.";
                     setTimeout(hideCells, 1000);
                 }
             }
@@ -67,7 +68,7 @@ KLOS.Memory = function (boardId) {
             renderGameBoard();
             
             if (foundPairs === ((boardSizeX * boardSizeY) / 2)) {
-                document.querySelector("#memory" + boardId + " section.resultsBoard").innerHTML = "Grattis! du vann!, det tog dig " + tries + " försök.";
+                document.querySelector("#memory" + boardId + " section.resultsBoard").innerHTML = "Grattis! du vann!, du misslyckades " + tries + " gånger.";
             }
         };
         
@@ -117,6 +118,7 @@ KLOS.Memory = function (boardId) {
         
         resultsBoardTag = document.createElement("section");
         resultsBoardTag.setAttribute("class", "resultsBoard");
+        resultsBoardTag.textContent = "Välkommen till memoryspelet!";
         
         containerTag.appendChild(gameBoardTag);
         containerTag.appendChild(resultsBoardTag);
