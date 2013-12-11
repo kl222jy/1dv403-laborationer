@@ -69,6 +69,8 @@ KLOS.Memory = function (boardId) {
             
             //Visa cell
             cells[index].show(index);
+            cells[index].isShown = true;
+            
             
             if (firstCell === null) {
                 firstCell = index;
