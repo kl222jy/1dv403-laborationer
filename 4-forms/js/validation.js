@@ -5,6 +5,8 @@ var validation = function () {
     var check, checkElements, checkEmail, checkPostalCode, checkTextbox, checkElement,
         regForm = document.querySelector("#regForm");
     
+    regForm.elements[0].select();
+    
     //Kopplar kontrollfunktioner till olika fält
     regForm.onsubmit = function () {
         var postals = [],
@@ -112,6 +114,19 @@ var validation = function () {
         return check(element, /^(?!\.)(\w|-|\.|#){1,64}(?!\.)@(?!\.)[\-.a-zåäö0-9]{4,253}$/, "Du har inte angivit en giltig e-post.");          // /^(?!\.)(\w|-|\.|#){1,64}(?!\.)@(?!\.)[-.a-zåäö0-9]{4,253}$/
     };
     checkPostalCode = function (element) {
+        
+        if (element.value.match(/^\D{2}/)) {
+            element.value = element.value.slice(2);
+        }
+        
+        if (element.value.match(/^ /)) {
+            element.value = element.value.slice(1);
+        }
+        
+        if (element.value.match(/\d{3}[ |\-]\d{2}/)) {
+            element.value = element.value.slice(0, 3) + element.value.slice(4);
+        }
+          
         return check(element, /^\d{5}$/, "Ditt postnummer verkar inte korrekt, det ska bestå av 5 siffror(ex. 12345).");
     };
     checkTextbox = function (element) {
