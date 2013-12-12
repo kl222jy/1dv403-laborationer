@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8" />
+    <title>Labby Message</title>
+<!--    <link rel="stylesheet" href="css/style.css" />-->
+</head>
+<body>
+<!--
+    <header class="branding">
+        <h1>DivWindows</h1>
+    </header>
+-->
+<!--
+    <nav>
+        <ul>
+            <li><a href="#"><img src="img/home.png" /></a></li>
+            <li><a href="#"><img src="img/messageboard.png" /></a></li>
+            <li><a href="#"><img src="img/memory.png" /></a></li>
+            <li><a href="#"><img src="img/minesweeper.png" /></a></li>
+        </ul>
+    </nav>
+-->
+    <main>
+        <article>
+            <header><h1>Registrering</h1></header>
+            <section>
+                <form id="regForm" action="http://voyager.lnu.se/tekinet/kurser/dtt/wp_webbteknik/process_form.php" method="post">
+                    <div>
+                        <label for="firstName">Förnamn</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="förnamn" />
+                    </div>
+                    <div>
+                        <label for="lastName">Efternamn</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="efternamn" />
+                    </div>
+                    <div>
+                        <label for="postalCode">Postnummer</label>
+                        <input type="text" id="postalCode" name="postalCode" placeholder="xxxxx" />
+                    </div>
+                    <div>
+                        <label for="email">E-post</label>
+                        <input type="text" id="email" name="email" placeholder="user@example.com" />
+                    </div>
+                    <div>
+                        <label for="pricePlan"></label>
+                        <select id="pricePlan" name="pricePlan">
+                            <option value="low">Låg</option>
+                            <option value="medium">Mellan</option>
+                            <option value="high">Hög</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="submit" value="Skicka" />
+                    </div>
+                </form>
+<!--
+        Normalt sett hade jag gjort det såhär, det gäller extrafunktionalitet och då känns det ok att 5% användare som valt att inte ta del av moderna funktioner inte får den hjälpen.
+        Sen bara :valid/:invalid/:selected i cssen
+
+                <form id="regForm" target="#">
+                    <div>
+                        <label for="firstName">Förnamn</label>
+                        <input type="text" id="firstName" placeholder="förnamn" required autofocus pattern="[a-zåäöA-ZÅÄÖ0-9 ]+" />
+                    </div>
+                    <div>
+                        <label for="lastName">Efternamn</label>
+                        <input type="text" id="lastName" placeholder="efternamn" required autofocus pattern="[a-zåäöA-ZÅÄÖ0-9 ]+" />
+                    </div>
+                    <div>
+                        <label for="postalCode">Postnummer</label>
+                        <input type="text" id="postalCode" placeholder="xxxxx" required pattern="[0-9]{5}" />
+                    </div>
+                    <div>
+                        <label for="email">E-post</label>
+                        <input type="text" id="email" name="email" required placeholder="user@example.com" />
+                    </div>
+                    <div>
+                        <label for="pricePlan"></label>
+                        <select id="pricePlan" name="pricePlan" required>
+                            <option value="low">Låg</option>
+                            <option value="medium">Mellan</option>
+                            <option value="high">Hög</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="submit" value="Skicka" />
+                    </div>
+                </form>
+-->
+            </section>
+        </article>
+    </main>
+    <script src="js/validation.js"></script>
+</body>
+</html>
