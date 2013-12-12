@@ -1,0 +1,21 @@
+.valid label {
+    color: green;
+}
+
+.valid input {
+    border: 1px solid green;
+    color: green;
+}
+.invalid label {
+    color: red;
+}
+
+.invalid input {
+    border: 1px solid red;
+    color: red;
+}
+
+.invalid p {
+    display: inline;
+    color: red;
+}
