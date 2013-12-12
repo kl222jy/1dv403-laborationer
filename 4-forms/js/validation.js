@@ -16,13 +16,7 @@ var validation = function () {
             i;
 
         inputs = regForm.querySelectorAll("input");
-        
-//        console.log(inputs);
-//        
-//        inputs.forEach(function (element) {
-//            console.log(element.attribute("type").value);
-//        });
-        
+
         for (i = 0; i < inputs.length; i += 1) {
             switch (inputs[i].attributes.getNamedItem("type").nodeValue) {
             case "text":
@@ -42,7 +36,6 @@ var validation = function () {
         } else {
             return false;
         }
-//        return checkElements();
     };
     
     regForm.onchange = function (e) {
@@ -59,14 +52,9 @@ var validation = function () {
             checkEmail(e.target);
             break;
         }
-                
-//        checkElements();
     };
     
-    checkElements = function () {
-
-        
-        
+//    checkElements = function () {        
 //        var checkedElements = [];
 //                     
 //        checkedElements.push(checkTextbox(regForm.elements.firstName));
@@ -75,7 +63,7 @@ var validation = function () {
 //        checkedElements.push(checkPostalCode(regForm.elements.postalCode));
 //        
 //        return checkedElements.every(checkElement);
-    };
+//    };
     
     
     checkElement = function (element, index, array) {
@@ -99,9 +87,7 @@ var validation = function () {
         } else {
             descTag = document.createElement("p");
             descTag.textContent = desc;
-            
-//            descTag = document.createTextNode(desc);
-            
+
             element.parentNode.appendChild(descTag);
             
             element.parentNode.classList.remove("valid");
