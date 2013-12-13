@@ -2,7 +2,7 @@
 /*global window, document, console */
 
 var validation = function () {
-    var check, checkElements, checkEmail, checkPostalCode, checkTextbox, checkElement,
+    var confirm, check, checkEmail, checkPostalCode, checkTextbox, checkElement,
         regForm = document.querySelector("#regForm");
     
     regForm.elements[0].select();
@@ -32,39 +32,107 @@ var validation = function () {
         }
         
         if (texts.every(checkTextbox) && postals.every(checkPostalCode) && emails.every(checkEmail)) {
-            return true;
+            return confirm();
         } else {
             return false;
         }
     };
     
-    regForm.onchange = function (e) {
-        console.log(e.target.attributes.getNamedItem("type").nodeValue === "text");
+    confirm = function () {
+        var bodyTag, popupTag, headerTag, h2Tag, sectionTag, footerTag, i, dlTag, ddTag, dtTag, inputs, labels, cancelButton, confirmButton, selects, deactivator;
         
-        switch (e.target.attributes.getNamedItem("type").nodeValue) {
-        case "text":
-            checkTextbox(e.target);
-            break;
-        case "postal":
-            checkPostalCode(e.target);
-            break;
-        case "email":
-            checkEmail(e.target);
-            break;
+//        bodyTag = document.querySelector("body");
+//        bodyTag.classList.toggle("inactive");
+        
+        deactivator = document.createElement("section");
+        deactivator.setAttribute("class", "deactivator");
+                
+        popupTag = document.createElement("article");
+        popupTag.setAttribute("class", "popupConfirm");
+        
+        headerTag = document.createElement("header");
+        h2Tag = document.createElement("h2");
+        h2Tag.textContent = "Vänligen bekräfta ditt köp";
+        sectionTag = document.createElement("section");
+        footerTag = document.createElement("footer");
+        cancelButton = document.createElement("button");
+        cancelButton.textContent = "Avbryt";
+        confirmButton = document.createElement("button");
+        confirmButton.textContent = "Genomför";
+        
+        cancelButton.onclick = function () {
+            var popup, deactivator;
+//            bodyTag.classList.toggle("inactive");
+            popup = document.querySelector("article.popupConfirm");
+            deactivator = document.querySelector(".deactivator");
+            document.querySelector("main").removeChild(popup);
+            document.querySelector("main").removeChild(deactivator);
+        };
+        
+        confirmButton.onclick = function () {
+            regForm.submit();
+        };
+        
+        dlTag = document.createElement("dl");
+        
+        inputs = regForm.querySelectorAll("input");
+        for (i = 0; i < inputs.length; i += 1) {
+            if (inputs[i].getAttribute("type") !== "submit") {
+                dtTag = document.createElement("dt");
+                ddTag = document.createElement("dd");
+                dtTag.textContent = inputs[i].parentNode.querySelector("label").textContent;
+                ddTag.textContent = inputs[i].value;
+                
+                dlTag.appendChild(dtTag);
+                dlTag.appendChild(ddTag);
+            }
         }
+        
+        selects = regForm.querySelectorAll("select");          //ändra till all om fler än 1
+        
+        for (i = 0; i < selects.length; i += 1) {
+            dtTag = document.createElement("dt");
+            ddTag = document.createElement("dd");
+            
+            dtTag.textContent = selects[i].parentNode.querySelector("label").textContent;
+            ddTag.textContent = selects[i].options[selects[i].selectedIndex].textContent;
+            
+            dlTag.appendChild(dtTag);
+            dlTag.appendChild(ddTag);
+        }
+
+        footerTag.appendChild(confirmButton);
+        footerTag.appendChild(cancelButton);
+        
+        sectionTag.appendChild(dlTag);
+        headerTag.appendChild(h2Tag);
+        popupTag.appendChild(headerTag);
+        popupTag.appendChild(sectionTag);
+        popupTag.appendChild(footerTag);
+        
+        
+        document.querySelector("main").appendChild(popupTag);
+        document.querySelector("main").appendChild(deactivator);
+
+        return false;
     };
     
-//    checkElements = function () {        
-//        var checkedElements = [];
-//                     
-//        checkedElements.push(checkTextbox(regForm.elements.firstName));
-//        checkedElements.push(checkTextbox(regForm.elements.lastName));
-//        checkedElements.push(checkEmail(regForm.elements.email));
-//        checkedElements.push(checkPostalCode(regForm.elements.postalCode));
-//        
-//        return checkedElements.every(checkElement);
-//    };
-    
+    regForm.onchange = function (e) {
+        
+        if (e.target.hasAttribute("type")) {
+            switch (e.target.attributes.getNamedItem("type").nodeValue) {
+            case "text":
+                checkTextbox(e.target);
+                break;
+            case "postal":
+                checkPostalCode(e.target);
+                break;
+            case "email":
+                checkEmail(e.target);
+                break;
+            }
+        }
+    };
     
     checkElement = function (element, index, array) {
         return element;
