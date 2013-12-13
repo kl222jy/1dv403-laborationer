@@ -62,6 +62,17 @@ var validation = function () {
         
         cancelButton.onclick = function () {
             var popup, deactivator;
+            
+            for (i = 0; i < inputs.length; i += 1) {
+                inputs[i].removeAttribute("disabled");
+            }
+            
+            for (i = 0; i < selects.length; i += 1) {
+                selects[i].removeAttribute("disabled");
+            }
+            
+            
+            
 //            bodyTag.classList.toggle("inactive");
             popup = document.querySelector("article.popupConfirm");
             deactivator = document.querySelector(".deactivator");
@@ -70,6 +81,14 @@ var validation = function () {
         };
         
         confirmButton.onclick = function () {
+            for (i = 0; i < inputs.length; i += 1) {
+                inputs[i].removeAttribute("disabled");
+            }
+            
+            for (i = 0; i < selects.length; i += 1) {
+                selects[i].removeAttribute("disabled");
+            }
+            
             regForm.submit();
         };
         
@@ -78,6 +97,9 @@ var validation = function () {
         inputs = regForm.querySelectorAll("input");
         for (i = 0; i < inputs.length; i += 1) {
             if (inputs[i].getAttribute("type") !== "submit") {
+                
+                inputs[i].setAttribute("disabled");
+                
                 dtTag = document.createElement("dt");
                 ddTag = document.createElement("dd");
                 dtTag.textContent = inputs[i].parentNode.querySelector("label").textContent;
@@ -91,6 +113,9 @@ var validation = function () {
         selects = regForm.querySelectorAll("select");          //ändra till all om fler än 1
         
         for (i = 0; i < selects.length; i += 1) {
+            
+            selects[i].setAttribute("disabled");
+            
             dtTag = document.createElement("dt");
             ddTag = document.createElement("dd");
             
