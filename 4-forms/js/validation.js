@@ -165,7 +165,8 @@ var validation = function () {
     };
     
     checkEmail = function (element) {
-        return check(element, /^(?!\.)(\w|-|\.|#){1,64}(?!\.)@(?!\.)[\-.a-zåäö0-9]{4,253}$/, "Du har inte angivit en giltig e-post.");          // /^(?!\.)(\w|-|\.|#){1,64}(?!\.)@(?!\.)[-.a-zåäö0-9]{4,253}$/
+//        return check(element, /^(?!\.)(\w|-|\.|#){1,64}(?!\.)@(?!\.)[-.a-zåäö0-9]{4,253}$/, "Du har inte angivit en giltig e-post.");
+        return check(element, /[\-0-9a-zA-Z.+_]+@[\-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}/, "Du har inte angivit en giltig e-post.");
     };
     checkPostalCode = function (element) {
         
@@ -184,7 +185,7 @@ var validation = function () {
         return check(element, /^\d{5}$/, "Ditt postnummer verkar inte korrekt, det ska bestå av 5 siffror(ex. 12345).");
     };
     checkTextbox = function (element) {
-        return check(element, /\w{3,}/, "Du måste ange minst 3 tecken.");
+        return check(element, /\w{2,}/, "Du måste ange minst 2 tecken.");
     };
 };
 
