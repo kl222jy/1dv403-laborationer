@@ -96,9 +96,10 @@ var validation = function () {
         
         inputs = regForm.querySelectorAll("input");
         for (i = 0; i < inputs.length; i += 1) {
+            inputs[i].setAttribute("disabled");
+
             if (inputs[i].getAttribute("type") !== "submit") {
                 
-                inputs[i].setAttribute("disabled");
                 
                 dtTag = document.createElement("dt");
                 ddTag = document.createElement("dd");
