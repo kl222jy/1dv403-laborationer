@@ -3,7 +3,9 @@
 //Trevlig lösning, slipper window onload, bra hantering inför användning av fler moduler och möjlighet att skjuta in hänvisningar till andra moduler som argument i kortare form.
 (function (KLOS) {
     "use strict";
-    var menu, counter, MemoryGameID, WindowManager, TestBox, inheritPrototype;
+    var menu, counter, MemoryGameID, WindowManager, TestBox, inheritPrototype, desktop;
+    
+    desktop = document.querySelector("main");
     
     counter = 1;
     MemoryGameID = 0;
@@ -27,19 +29,6 @@
         };
     }());
     
-//    KLOS.EventUtil = {};
-    
-//    WindowManager = function () {
-        
-        //Samtliga "programinstanser" ska ärva från WM, som i sin tur har all fönsterfunktionalitet(flytta, ändra storlek, minimera, maximera)
-        //Inkapslande html i WM, högre z-index på innehållet för att inte skriva över klick event på "programinstaser"
-        //Läs vidare om parasitic combination inheritance (pro js s. 212-214)
-        
-        //Alternativ lösning är att bara skicka objektanropen till wm som i sin tur kör anropet och nästlar in detta i sin html, vilket förmodligen är lättare.
-        
-
-//    };
-
     function object(o) {
         function F() {}
         F.prototype = o;
@@ -47,14 +36,34 @@
     }
     
     function WM(name) {
-        this.name = name;
-        this.testvalue = "blargh!";
-        console.log("från WM: " + this.name);
+//        this.name = name;
+//        this.testvalue = "blargh!";
+//        console.log("från WM: " + this.name);
+        var test, render, windowBody, that;
+
+        this.windowBody = null;
+        that = this;
+        render = (function () {
+            var window = document.createElement("article"),
+                titleBar = document.createElement("header"),
+                body = document.createElement("section");
+            
+            window.setAttribute("class", "window");
+            titleBar.textContent = name;
+            body.setAttribute("id", name);
+            
+            window.appendChild(titleBar);
+            window.appendChild(body);
+            
+            
+            that.windowBody = body;
+            desktop.appendChild(window);
+        }());
     }
     
-    WM.prototype.testFunction = function (alertMessage) {
-        alert(alertMessage);
-    };
+//    WM.prototype.testFunction = function (alertMessage) {
+//        alert(alertMessage);
+//    };
     
     inheritPrototype = function (subType, superType) {
         var prototype = object(superType.prototype);
@@ -64,34 +73,15 @@
         
     TestBox = function (name) {
         WM.call(this, name);
-        console.log(this.testvalue);
-        this.testFunction("fungerade!");
+//        console.log(this.testvalue);
+//        this.testFunction("fungerade!");
+        var testTag = document.createElement("p");
+        testTag.textContent = "Då provar vi om det här också kan tänkas fungera.";
+        this.windowBody.appendChild(testTag);
     };
     
     inheritPrototype(TestBox, WM);
-
-    
-//    KLOS.init = function () {
-//        KLOS.menu();
-//    };
-//    
-//    KLOS.init();
+    inheritPrototype(KLOS.Memory, WM);
+    inheritPrototype(KLOS.MessageBoard, WM);
     
 }(window.KLOS = window.KLOS || {}));
-
-
-
-
-
-
-//
-//"use strict";
-//
-//var KLOS = KLOS || {};
-//
-//
-//
-//window.onload = function () {
-//    KLOS.menu();
-//};
-//

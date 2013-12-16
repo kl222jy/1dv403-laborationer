@@ -1,8 +1,10 @@
-"use strict";
-/*global window, event, document, console */
+//"use strict";
+/*global window, event, document, console, WM */
 var KLOS = KLOS || {};
 
 KLOS.Memory = function (boardId) {
+    "use strict";
+    KLOS.WM.call(this, boardId);
     var cellArray, Cell, cells, boardSizeY, boardSizeX, renderGameBoard, renderGame, checkPair, renderCell, firstCell, secondCell, updateGameBoard, tries, foundPairs, hideCells, nullCells;
     
     boardSizeX = 4;
@@ -156,6 +158,10 @@ KLOS.Memory = function (boardId) {
         
     };
     
-    document.querySelector("main").appendChild(renderGame());
+//    document.querySelector("main").appendChild(renderGame());
+    this.windowBody.appendChild(renderGame());
     renderGameBoard();
 };
+
+
+//KLOS.inheritPrototype(KLOS.Memory, KLOS.WM);

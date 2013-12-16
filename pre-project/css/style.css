@@ -38,6 +38,18 @@ nav img
     cursor: pointer;
 }
 
+.window header
+{
+    height: 25px;
+    background-color: #227ebb;
+    color: white;
+}
+
+.window>section
+{
+    background-color: white;
+}
+
 /*
 .msgBoard
 {
