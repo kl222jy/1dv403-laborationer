@@ -17,6 +17,7 @@ var validation = function () {
 
         inputs = regForm.querySelectorAll("input");
 
+        //Avgör vilka kontroller som ska köras baserat på type
         for (i = 0; i < inputs.length; i += 1) {
             switch (inputs[i].attributes.getNamedItem("type").nodeValue) {
             case "text":
@@ -31,6 +32,7 @@ var validation = function () {
             }
         }
         
+        //Kör alla kontroller
         if (texts.every(checkTextbox) && postals.every(checkPostalCode) && emails.every(checkEmail)) {
             return confirm();
         } else {
@@ -38,11 +40,9 @@ var validation = function () {
         }
     };
     
+    //Visa dialogruta för bekräftelse
     confirm = function () {
         var bodyTag, popupTag, headerTag, h2Tag, sectionTag, footerTag, i, dlTag, ddTag, dtTag, inputs, labels, cancelButton, confirmButton, selects, deactivator;
-        
-//        bodyTag = document.querySelector("body");
-//        bodyTag.classList.toggle("inactive");
         
         deactivator = document.createElement("section");
         deactivator.setAttribute("class", "deactivator");
@@ -60,6 +60,7 @@ var validation = function () {
         confirmButton = document.createElement("button");
         confirmButton.textContent = "Genomför";
         
+        //Avbryt
         cancelButton.onclick = function () {
             var popup, deactivator;
             
@@ -71,15 +72,13 @@ var validation = function () {
                 selects[i].removeAttribute("disabled");
             }
             
-            
-            
-//            bodyTag.classList.toggle("inactive");
             popup = document.querySelector("article.popupConfirm");
             deactivator = document.querySelector(".deactivator");
             document.querySelector("main").removeChild(popup);
             document.querySelector("main").removeChild(deactivator);
         };
         
+        //Bekräfta
         confirmButton.onclick = function () {
             for (i = 0; i < inputs.length; i += 1) {
                 inputs[i].removeAttribute("disabled");
@@ -96,11 +95,10 @@ var validation = function () {
         
         inputs = regForm.querySelectorAll("input");
         for (i = 0; i < inputs.length; i += 1) {
+
             inputs[i].setAttribute("disabled");
 
             if (inputs[i].getAttribute("type") !== "submit") {
-                
-                
                 dtTag = document.createElement("dt");
                 ddTag = document.createElement("dd");
                 dtTag.textContent = inputs[i].parentNode.querySelector("label").textContent;
@@ -145,6 +143,7 @@ var validation = function () {
     
     regForm.onchange = function (e) {
         
+        //Kontroller baserat på type
         if (e.target.hasAttribute("type")) {
             switch (e.target.attributes.getNamedItem("type").nodeValue) {
             case "text":
@@ -164,6 +163,7 @@ var validation = function () {
         return element;
     };
     
+    //Generaliserad kontrollfunktion
     check = function (element, rgx, desc) {
         var descTag, divTag, pTag;
 
@@ -196,18 +196,22 @@ var validation = function () {
     };
     checkPostalCode = function (element) {
         
+        //Om första 2 tecken är annat än siffror, ta bort
         if (element.value.match(/^\D{2}/)) {
             element.value = element.value.slice(2);
         }
         
+        //Om första tecken är mellanslag, ta bort
         if (element.value.match(/^ /)) {
             element.value = element.value.slice(1);
         }
         
+        //Om fjärde tecknet är - eller mellanslag, ta bort
         if (element.value.match(/\d{3}[ |\-]\d{2}/)) {
             element.value = element.value.slice(0, 3) + element.value.slice(4);
         }
-          
+        
+        //Kontrollera att det är korrekt
         return check(element, /^\d{5}$/, "Ditt postnummer verkar inte korrekt, det ska bestå av 5 siffror(ex. 12345).");
     };
     checkTextbox = function (element) {
