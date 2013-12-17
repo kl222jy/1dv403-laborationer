@@ -4,6 +4,8 @@ var KLOS = KLOS || {};
 
 KLOS.Memory = function (boardId) {
     "use strict";
+    console.log(KLOS.WM);
+    console.log(KLOS.menu);
     KLOS.WM.call(this, boardId);
     var cellArray, Cell, cells, boardSizeY, boardSizeX, renderGameBoard, renderGame, checkPair, renderCell, firstCell, secondCell, updateGameBoard, tries, foundPairs, hideCells, nullCells;
     

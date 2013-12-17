@@ -38,6 +38,15 @@ nav img
     cursor: pointer;
 }
 
+.window
+{
+    display: inline-block;
+    border: 2px solid black;
+    position: fixed;
+    left: 50px;
+    top: 50px;
+}
+
 .window header
 {
     height: 25px;
@@ -49,6 +58,15 @@ nav img
 {
     background-color: white;
 }
+
+
+
+
+
+
+
+
+
 
 /*
 .msgBoard
@@ -63,9 +81,6 @@ nav img
 */
 .msgBoard
 {
-    position: fixed;
-    left: 50px;
-    top: 50px;
     width: 500px;
     border: solid 5px black;
     margin: 10px;
