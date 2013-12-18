@@ -14,7 +14,6 @@ KLOS.Memory = function (boardId) {
     tries = 0;
     foundPairs = 0;
     
-    
     cellArray = KLOS.Memory.RandomGenerator.getPictureArray(boardSizeY, boardSizeX);
     
     Cell = function (cellValue) {

@@ -63,32 +63,34 @@
             body.setAttribute("id", name);
             
             
-            //Kommer bli problem med nedanstående, kontrollera om det går att skriva direkt till computed css eller liknande. Annars kommer den återgå till standardposition när storlek ändras och standardstorlek när den flyttas.
+            //Kommer bli problem med nedanstående, kontrollera om det går att skriva direkt till computed css eller liknande. 
+            //Annars kommer den återgå till standardposition när storlek ändras och standardstorlek när den flyttas.
+            //Alternativt ha variabler för alla värden och få med båda funktioners variabler i vardera style
             //Start-ResizeWindow
-            resize = function (e) {
-                var width, height;
-                e = e || event;
-                
-                width = e.clientX - startOffsetX;
-                height = e.clientY - startOffsetY;
-                
-                klosWindow.setAttribute("style", "width: " + width + "px; height: " + height + "px; z-index: " + counter);
-            };
-            
-            body.onmousedown = function (e) {
-                var css = getComputedStyle(klosWindow);
-                e = e || event;
-                startOffsetX = parseInt(css.getPropertyValue("width"), 10) - e.clientX;
-                startOffsetY = parseInt(css.getPropertyValue("height"), 10) - e.clientY;
-                counter += 1;
-                window.addEventListener("windowResize", resize, false);
-            };
-            
-            window.onmouseup = function (e) {
-                e = e || event;
-                window.removeEventListener("windowResize", resize, false);
-            };
-            
+//            resize = function (e) {
+//                var width, height;
+//                e = e || event;
+//                
+//                width = e.clientX - startOffsetX;
+//                height = e.clientY - startOffsetY;
+//                
+//                klosWindow.setAttribute("style", "width: " + width + "px; height: " + height + "px; z-index: " + counter);
+//            };
+//            
+//            body.onmousedown = function (e) {
+//                var css = getComputedStyle(klosWindow);
+//                e = e || event;
+//                startOffsetX = parseInt(css.getPropertyValue("width"), 10) - e.clientX;
+//                startOffsetY = parseInt(css.getPropertyValue("height"), 10) - e.clientY;
+//                counter += 1;
+//                window.addEventListener("windowResize", resize, false);
+//            };
+//            
+//            window.onmouseup = function (e) {
+//                e = e || event;
+//                window.removeEventListener("windowResize", resize, false);
+//            };
+//            
             //End-ResizeWindow
             
             
@@ -136,7 +138,19 @@
         aboutTag.textContent = "Applikationen skapad av Kristoffer lind.";
         this.windowBody.appendChild(aboutTag);
     };
-
+    
+//    KLOS.SimpleWindow = function (name) {
+//        call KLOS.WM(this, name);
+//    };
+//    
+//    AboutBox = function () {
+//        call KLOS.SimpleWindow(this, "AboutBox");
+//    };
+//    
+//    
+//    inheritPrototype(KLOS.SimpleWindow, KLOS.WM);
+//    inheritPrototype(AboutBox, KLOS.SimpleWindow);
+    
     inheritPrototype(AboutBox, KLOS.WM);
     inheritPrototype(KLOS.Memory, KLOS.WM);
     inheritPrototype(KLOS.MessageBoard, KLOS.WM);
