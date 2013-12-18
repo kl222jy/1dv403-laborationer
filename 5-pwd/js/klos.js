@@ -1,4 +1,4 @@
-/*global window, event, document, console, alert, object, confirm, getComputedStyle*/
+/*global window, event, document, console, alert, object, confirm, getComputedStyle, XMLHttpRequest*/
 
 //(KLOS, undefined)? klagomål från jslint. 
 //Trevlig lösning, slipper window onload, bra hantering inför användning av fler moduler och möjlighet att skjuta in hänvisningar till andra moduler som argument i kortare form.
@@ -31,7 +31,7 @@
             alert("mineSweeper placeholder");
         };
         menuItems[4].onclick = function () {
-            alert("imageViewer placeholder");
+            var imageViewerInstance = new KLOS.ImageViewer();
         };
         menuItems[5].onclick = function () {
             alert("rss placeholder");
@@ -151,8 +151,29 @@
 //    inheritPrototype(KLOS.SimpleWindow, KLOS.WM);
 //    inheritPrototype(AboutBox, KLOS.SimpleWindow);
     
+    inheritPrototype(KLOS.ImageViewer, KLOS.WM);
+    inheritPrototype(KLOS.ImageView, KLOS.WM);
     inheritPrototype(AboutBox, KLOS.WM);
     inheritPrototype(KLOS.Memory, KLOS.WM);
     inheritPrototype(KLOS.MessageBoard, KLOS.WM);
+    
+    KLOS.XhrCon = function (url, callback) {
+        var xhr = new XMLHttpRequest();
+        
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if ((xhr.status >= 200 && xhr.status) < 300 || xhr.status === 304) {
+                    callback(xhr.responseText);
+//                    return JSON.parse(xhr.responseText);
+                } else {
+                    console.log("Fel vid inläsning, xhr.status: " + xhr.status);
+                }
+            }
+        };
+        
+        xhr.open("get", url, true);
+        xhr.send(null);
+    };
+    
     
 }(window.KLOS = window.KLOS || {}));
