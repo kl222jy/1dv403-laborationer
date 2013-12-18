@@ -1,12 +1,10 @@
 //"use strict";
-/*global window, event, document, console, WM */
+/*global window, event, document, console, WM, setTimeout */
 var KLOS = KLOS || {};
 
 KLOS.Memory = function (boardId) {
     "use strict";
-    console.log(KLOS.WM);
-    console.log(KLOS.menu);
-    KLOS.WM.call(this, boardId);
+    KLOS.WM.call(this, "Memory");
     var cellArray, Cell, cells, boardSizeY, boardSizeX, renderGameBoard, renderGame, checkPair, renderCell, firstCell, secondCell, updateGameBoard, tries, foundPairs, hideCells, nullCells;
     
     boardSizeX = 4;
@@ -144,7 +142,7 @@ KLOS.Memory = function (boardId) {
         containerTag = document.createElement("article");
         containerTag.setAttribute("class", "memoryContainer");
         containerTag.setAttribute("id", "memory" + boardId);
-        containerTag.textContent = "Memory";
+//        containerTag.textContent = "Memory";
         
         gameBoardTag = document.createElement("section");
         gameBoardTag.setAttribute("class", "gameBoard");

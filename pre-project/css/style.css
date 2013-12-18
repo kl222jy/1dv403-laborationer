@@ -45,6 +45,9 @@ nav img
     position: fixed;
     left: 50px;
     top: 50px;
+    background-color: #fff;
+    padding-right: 2px;
+    padding-bottom: 2px;
 }
 
 .window header
@@ -52,37 +55,22 @@ nav img
     height: 25px;
     background-color: #227ebb;
     color: white;
+    text-align: left;
+    padding-left: 10px;
+    cursor: move;
+    margin-right: -2px;
 }
 
 .window>section
 {
     background-color: white;
+    cursor: se-resize;
 }
 
-
-
-
-
-
-
-
-
-
-/*
-.msgBoard
-{
-    display: inline-block;
-    width: 500px;
-    border: solid 5px black;
-    margin: 10px;
-    background-color: white;
-    margin-top: 100px;
-}
-*/
 .msgBoard
 {
     width: 500px;
-    border: solid 5px black;
+    
     margin: 10px;
     background-color: white;
 }
@@ -95,6 +83,7 @@ main
 {
     width: 100%;
     text-align: center;
+    overflow: none;
 }
 
 input[submit]
@@ -103,6 +92,7 @@ input[submit]
 }
 .msgBoxHeader
 {
+    display: none;
     font-size: 24px;
     text-align: center;
     padding: 10px;
@@ -164,28 +154,29 @@ input[submit]
 
 .memoryContainer
 {
-    width: 200px;
-    height: 200px;
+
     display: inline-block;
-    margin: 50px;
     background-color: grey;
-    border: 5px solid black;
+    z-index: 2;
 }
 
 .gameBoard
 {
-    border-top: 5px solid black;
+
     background-color: white;
-    width: 100%;
+    width: 275px;
+    height: 200px;
 }
 
 .gameBoard table
 {
     width: 100%;
+    height: 100%;
 }
 
 .resultsBoard
 {
     background-color: white;
     width: 100%;
+    
 }

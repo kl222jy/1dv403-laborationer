@@ -4,6 +4,7 @@
 var KLOS = KLOS || {};
 
 KLOS.MessageBoard = function (name) {
+    KLOS.WM.call(this, "MessageBoard");
     var elem, renderMsgBox, that, renderMessage, renderMessages;
     
     this.name = name;
@@ -104,8 +105,8 @@ KLOS.MessageBoard = function (name) {
         boardFragment.appendChild(msgSection);
         boardFragment.appendChild(inputSection).appendChild(form).appendChild(textarea).parentElement.appendChild(inputButton);
         
-        main = document.querySelector("main");
-        main.appendChild(boardFragment);
+//        main = document.querySelector("main");
+        that.windowBody.appendChild(boardFragment);
     };
 
     renderMessage = function (message, date, index) {
@@ -176,6 +177,3 @@ KLOS.MessageBoard = function (name) {
     renderMsgBox(name);
     
 };
-
-KLOS.MessageBoardCounter = 1;
-KLOS.MessageBoardID = 1;
