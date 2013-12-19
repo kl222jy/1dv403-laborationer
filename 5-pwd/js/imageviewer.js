@@ -1,4 +1,4 @@
-/*global window, event, document, console, alert, object, confirm, getComputedStyle, XMLHttpRequest, setTimeout*/
+/*global window, event, document, console, alert, object, confirm, getComputedStyle, XMLHttpRequest, setTimeout, clearTimeout*/
 (function (KLOS) {
     "use strict";
     
@@ -26,7 +26,7 @@
         xhr = KLOS.XhrCon("http://homepage.lnu.se/staff/tstjo/labbyServer/imgviewer/", function (data) {
             images = JSON.parse(data);
             
-            imageLoadTimer = null;
+            clearTimeout(imageLoadTimer);
             
             max = -Infinity;
             
@@ -74,6 +74,8 @@
             toolBarEditMenu = document.createElement("ul"),
             toolBarEdit = document.createElement("li"),
             toolBarEditMenuSetBG = document.createElement("li");
+        
+        this.windowIcon.setAttribute("src", "img/imageviewer.png");
         
         img.setAttribute("src", image.URL);
         img.setAttribute("width", image.width);

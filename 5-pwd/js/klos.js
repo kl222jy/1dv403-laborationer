@@ -18,26 +18,33 @@
         
         menuItems[0].onclick = function () {
             document.querySelector("main").innerHTML = "";
+            return false;
         };
         menuItems[1].onclick = function () {
             var messageBoardInstance = new KLOS.MessageBoard("messageBoard" + MessageBoardID);
             MessageBoardID += 1;
+            return false;
         };
         menuItems[2].onclick = function () {
             var memoryGameInstance = new KLOS.Memory("Memory" + MemoryGameID);
             MemoryGameID += 1;
+            return false;
         };
         menuItems[3].onclick = function () {
-            alert("mineSweeper placeholder");
+            var mineSweeperInstance = new KLOS.MineSweeper();
+            return false;
         };
         menuItems[4].onclick = function () {
             var imageViewerInstance = new KLOS.ImageViewer();
+            return false;
         };
         menuItems[5].onclick = function () {
-            alert("rss placeholder");
+            var rssReaderInstace = new KLOS.RssReader();
+            return false;
         };
         menuItems[6].onclick = function () {
             var aboutBoxInstance = new AboutBox("Om");
+            return false;
         };
         
     }());
@@ -74,7 +81,7 @@
                 icon = document.createElement("img");
      
             klosWindow.setAttribute("class", "window");
-            body.setAttribute("id", name);
+            body.setAttribute("class", name.replace(" ", ""));
 
             
             //Start - Titlebar------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -226,6 +233,9 @@
         
     AboutBox = function (name) {
         KLOS.WM.call(this, name);
+        
+        this.windowIcon.setAttribute("src", "img/about.png");
+        
         var aboutTag = document.createElement("p");
         aboutTag.textContent = "Applikationen skapad av Kristoffer lind.";
         this.windowBody.appendChild(aboutTag);
@@ -243,6 +253,8 @@
 //    inheritPrototype(KLOS.SimpleWindow, KLOS.WM);
 //    inheritPrototype(AboutBox, KLOS.SimpleWindow);
     
+    inheritPrototype(KLOS.MineSweeper, KLOS.WM);
+    inheritPrototype(KLOS.RssReader, KLOS.WM);
     inheritPrototype(KLOS.ImageViewer, KLOS.WM);
     inheritPrototype(KLOS.ImageView, KLOS.WM);
     inheritPrototype(AboutBox, KLOS.WM);

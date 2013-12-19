@@ -7,6 +7,8 @@ KLOS.Memory = function (boardId) {
     KLOS.WM.call(this, "Memory");
     var cellArray, Cell, cells, boardSizeY, boardSizeX, renderGameBoard, renderGame, checkPair, renderCell, firstCell, secondCell, updateGameBoard, tries, foundPairs, hideCells, nullCells;
     
+    this.windowIcon.setAttribute("src", "img/memory.png");
+    
     boardSizeX = 4;
     boardSizeY = 4;
     firstCell = null;

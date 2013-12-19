@@ -7,6 +7,8 @@ KLOS.MessageBoard = function (name) {
     KLOS.WM.call(this, "MessageBoard");
     var elem, renderMsgBox, that, renderMessage, renderMessages;
     
+    this.windowIcon.setAttribute("src", "img/messageboard.png");
+    
     this.name = name;
     
     this.messages = [];
