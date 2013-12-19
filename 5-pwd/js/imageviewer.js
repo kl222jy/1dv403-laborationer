@@ -6,7 +6,7 @@
     
     KLOS.ImageViewer = function () {
         KLOS.WM.call(this, "ImageViewer");
-        var xhr, images, imageListTag;
+        var xhr, images, imageListTag, max, i;
         
         imageListTag = document.createElement("ul");
         imageListTag.setAttribute("class", "ImageViewerList");
@@ -14,9 +14,32 @@
         xhr = KLOS.XhrCon("http://homepage.lnu.se/staff/tstjo/labbyServer/imgviewer/", function (data) {
             images = JSON.parse(data);
             
+            max = -Infinity;
+            
+            for (i = 0; i < images.length; i += 1) {
+                if (images[i].thumbWidth > max) {
+                    max = images[i].thumbWidth;
+                }
+            }
+            
+            
             images.forEach(function (element) {
-                var li = makeThumb(element);
+                var a = document.createElement("a"),
+                    img = document.createElement("img"),
+                    li = document.createElement("li");
+                li.setAttribute("style", "width: " + max + "px");
+                a.setAttribute("href", "#");
+        
+                a.onclick = function () {
+                    var imageViewInstance = KLOS.ImageView(element);
+        //            console.log(image);
+                };
                 
+                img.setAttribute("src", element.thumbURL);
+                img.setAttribute("width", element.thumbWidth);
+                
+                a.appendChild(img);
+                li.appendChild(a);
                 imageListTag.appendChild(li);
             });
         });
@@ -24,30 +47,8 @@
         this.windowBody.appendChild(imageListTag);
     };
     
-    
-    makeThumb = function (image) {
-        var a = document.createElement("a"),
-            img = document.createElement("img"),
-            li = document.createElement("li");
-
-        a.setAttribute("href", "#");
-
-        a.onclick = function () {
-            var imageViewInstance = KLOS.ImageView(image);
-//            console.log(image);
-        };
-        
-        img.setAttribute("src", image.thumbURL);
-        img.setAttribute("width", image.thumbWidth);
-        
-        a.appendChild(img);
-        li.appendChild(a);
-        return li;
-    };
-    
-    
     KLOS.ImageView = function (image) {
-        KLOS.WM.Call(this, "ImageView");
+        KLOS.WM.call(this, "ImageView");
         var img = document.createElement("img");
         
         img.setAttribute("src", image.URL);

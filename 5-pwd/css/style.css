@@ -179,3 +179,17 @@ input[submit]
     width: 100%;
     
 }
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ImageViewer */
+.ImageViewerList
+{
+    width: 300px;
+    list-style: none;
+    padding: 0;
+    height: 300px;
+    overflow-y:scroll;
+}
+
+.ImageViewerList li
+{
+    display: inline-block;
+}
