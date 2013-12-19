@@ -4,9 +4,9 @@
 //Trevlig lösning, slipper window onload, bra hantering inför användning av fler moduler och möjlighet att skjuta in hänvisningar till andra moduler som argument i kortare form.
 (function (KLOS) {
     "use strict";
-    var menu, counter, MemoryGameID, WindowManager, AboutBox, inheritPrototype, desktop, Memory, MessageBoard, MessageBoardID, MessageBoardCounter;
+    var menu, counter, MemoryGameID, WindowManager, AboutBox, inheritPrototype, Memory, MessageBoard, MessageBoardID, MessageBoardCounter;
     
-    desktop = document.querySelector("main");
+    KLOS.desktop = document.querySelector("main");
     
     counter = 1;
     MemoryGameID = 0;
@@ -49,16 +49,26 @@
     }
     
     KLOS.WM = function (name) {
-        var test, render, windowBody, that, offsetY, offsetX, move, currentWidth, currentHeight, startOffsetX, startOffsetY, resize;
+        var test, render, windowBody, windowToolBar, windowStatusBar, that, offsetY, offsetX, move, currentWidth, currentHeight, startOffsetX, startOffsetY, resize;
 
         this.windowBody = null;
+        this.windowToolBar = null;
+        this.windowStatusBar = null;
+        
         that = this;
         render = (function () {
             var klosWindow = document.createElement("article"),
                 titleBar = document.createElement("header"),
                 body = document.createElement("section"),
                 closeImg = document.createElement("img"),
-                closeA = document.createElement("a");
+                closeA = document.createElement("a"),
+                toolBar = document.createElement("section"),
+                toolBarMenus = document.createElement("ul"),
+                toolBarMenu = document.createElement("ul"),
+                toolBarMenuFile = document.createElement("li"),
+                toolBarMenuFileClose = document.createElement("li"),
+                statusBar = document.createElement("section");
+                
             
             
             
@@ -69,7 +79,43 @@
             klosWindow.setAttribute("class", "window");
             titleBar.textContent = name;
             body.setAttribute("id", name);
+
             
+            //Start - Toolbar-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+            toolBar.setAttribute("class", "toolBar");
+            toolBarMenus.setAttribute("class", "toolBarMenus");
+            toolBarMenuFile.textContent = "Arkiv";
+            toolBarMenuFileClose.textContent = "Stäng";
+            
+            toolBarMenuFileClose.onclick = function (e) {
+                e = e || event;
+                e.preventDefault();
+                e.stopPropagation();
+                KLOS.desktop.removeChild(klosWindow);
+            };
+            
+            toolBarMenuFile.onclick = function () {
+                toolBarMenu.classList.toggle("show");
+                return false;
+            };
+            
+            
+            toolBarMenu.appendChild(toolBarMenuFileClose);
+            toolBarMenuFile.appendChild(toolBarMenu);
+            toolBarMenus.appendChild(toolBarMenuFile);
+            toolBar.appendChild(toolBarMenus);
+            
+            
+            
+            //Start - Statusbar-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            statusBar.setAttribute("class", "statusBar");
+            
+            
+            
+            
+            //Start Window funktioner-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
             //Kommer bli problem med nedanstående, kontrollera om det går att skriva direkt till computed css eller liknande. 
             //Annars kommer den återgå till standardposition när storlek ändras och standardstorlek när den flyttas.
@@ -129,22 +175,25 @@
                 e = e || event;
                 e.preventDefault();
                 e.stopPropagation();
-                desktop.removeChild(klosWindow);
+                KLOS.desktop.removeChild(klosWindow);
             };
             
             //End-CloseWindow
             
-            
+            //END WINDOW FUNKTIONER-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
             closeA.appendChild(closeImg);
             titleBar.appendChild(closeA);
             
             klosWindow.appendChild(titleBar);
+            klosWindow.appendChild(toolBar);
             klosWindow.appendChild(body);
+            klosWindow.appendChild(statusBar);
             
-            
+            that.windowStatusBar = statusBar;
+            that.windowToolBar = toolBarMenus;
             that.windowBody = body;
-            desktop.appendChild(klosWindow);
+            KLOS.desktop.appendChild(klosWindow);
         }());
     };
     

@@ -178,19 +178,67 @@ input[submit]
     background-color: white;
     width: 100%;
 }
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Window */
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - window */
 .window header img
 {
     z-index: 100;
     float: right;
 }
 
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - statusBar */
+
+.statusBar
+{
+    height: 20px;
+    background-color: #ddd;
+}
+
+.statusBar img
+{
+    float: left;
+    padding-left: 5px;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - toolBar */
+
+.toolBar>ul
+{
+    background-color: #ddd;
+    text-align: left;
+    height: 20px;
+}
+
+.toolBar>ul>li
+{
+    display: inline-block;
+    padding: 0 10px 0 10px;
+}
+
+.toolBar li
+{
+    cursor: pointer;
+}
+
+.toolBar ul
+{
+    list-style: none;
+    padding: 5px;
+    margin: 0;
+}
 
 
+.toolBar ul li ul
+{
+    background-color: #ddd;
+    display: none;
+    position: relative;
+    padding: 0 10px 0 10px
+}
 
-
-
-
+.show
+{
+    display: block !important;
+}
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ImageViewer */
