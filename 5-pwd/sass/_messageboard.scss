@@ -1,0 +1,73 @@
+.msgBoard
+{
+    width: 500px;
+    
+    margin: 10px;
+    background-color: white;
+}
+
+input[submit]
+{
+    color: black;
+}
+.msgBoxHeader
+{
+    display: none;
+    font-size: 24px;
+    text-align: center;
+    padding: 10px;
+    color: white;
+    background-color: grey;
+    border-bottom: 5px solid black;
+}
+.msgBox
+{
+    height: 400px;
+    overflow-y: auto;
+}
+.msgBox img
+{
+    vertical-align: top;
+    float: right;
+    width: 25px;
+    cursor: pointer;
+}
+.msgBox footer
+{
+    text-align: right;
+    vertical-align: bottom;
+}
+.msgContent
+{
+    padding: 10px;
+    text-align: left;
+    word-wrap: break-word;
+}
+.msgItem:nth-child(2n)
+{
+    background-color: #f0f5ff;
+}
+.inputBox
+{
+    vertical-align: top;
+}
+.inputBox textarea
+{
+    display: block;
+    width: 400px;
+    height: 50px;
+    margin: 0;
+    resize: none;
+    float: left;
+}
+.inputBox input
+{
+    width: 90px;
+    height: 50px;
+    display: block;
+    margin: 0;
+}
+.msgCounter
+{
+    float: right;
+}

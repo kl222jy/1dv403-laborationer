@@ -1,0 +1,17 @@
+.ImageViewerList
+{
+    width: 350px;
+    list-style: none;
+    padding: 0;
+    height: 300px;
+    overflow-y:scroll;
+}
+
+.ImageViewerList li
+{
+    display: inline-block;
+    padding: 5px;
+    margin: 5px;
+    background-color: #ddd;
+    border-radius: 10px;
+}

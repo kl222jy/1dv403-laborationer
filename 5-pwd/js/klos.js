@@ -51,8 +51,10 @@
     KLOS.WM = function (name) {
         var test, render, windowBody, windowToolBar, windowStatusBar, that, offsetY, offsetX, move, currentWidth, currentHeight, startOffsetX, startOffsetY, resize;
 
-        this.windowBody = null;
+        this.windowIcon = null;
+        this.windowTitleBar = null;
         this.windowToolBar = null;
+        this.windowBody = null;
         this.windowStatusBar = null;
         
         that = this;
@@ -67,20 +69,35 @@
                 toolBarMenu = document.createElement("ul"),
                 toolBarMenuFile = document.createElement("li"),
                 toolBarMenuFileClose = document.createElement("li"),
-                statusBar = document.createElement("section");
-                
-            
-            
-            
-            closeImg.setAttribute("src", "img/close.png");
-            closeImg.setAttribute("draggable", "false");
-            closeA.setAttribute("href", "#");
-            
+                statusBar = document.createElement("section"),
+                title = document.createElement("h1"),
+                icon = document.createElement("img");
+     
             klosWindow.setAttribute("class", "window");
-            titleBar.textContent = name;
             body.setAttribute("id", name);
 
             
+            //Start - Titlebar------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+            closeImg.setAttribute("src", "img/close.png");
+            closeImg.setAttribute("draggable", "false");
+            closeA.setAttribute("href", "#");
+            closeA.setAttribute("class", "windowClose");
+            
+
+            icon.setAttribute("width", "20px");
+            icon.setAttribute("height", "20px");
+            icon.setAttribute("class", "windowIcon");
+
+            title.textContent = name;
+
+            closeA.appendChild(closeImg);
+            titleBar.appendChild(closeA);
+            
+            titleBar.appendChild(icon);
+            titleBar.appendChild(title);
+            titleBar.appendChild(closeA);
+
             //Start - Toolbar-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
             toolBar.setAttribute("class", "toolBar");
@@ -182,14 +199,14 @@
             
             //END WINDOW FUNKTIONER-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
-            closeA.appendChild(closeImg);
-            titleBar.appendChild(closeA);
             
             klosWindow.appendChild(titleBar);
             klosWindow.appendChild(toolBar);
             klosWindow.appendChild(body);
             klosWindow.appendChild(statusBar);
             
+            that.windowIcon = icon;
+            that.windowTitleBar = titleBar;
             that.windowStatusBar = statusBar;
             that.windowToolBar = toolBarMenus;
             that.windowBody = body;

@@ -8,6 +8,8 @@
         KLOS.WM.call(this, "ImageViewer");
         var xhr, images, imageListTag, max, i, imageLoadTimer, activityImage, that;
         
+        this.windowIcon.setAttribute("src", "img/imageviewer.png");
+        
         imageListTag = document.createElement("ul");
         imageListTag.setAttribute("class", "ImageViewerList");
 
@@ -17,7 +19,6 @@
             activityImage = document.createElement("img");
             activityImage.setAttribute("src", "img/activity.gif");
             activityImage.setAttribute("class", "activityImage");
-            console.log(that.windowStatusBar);
 
             that.windowStatusBar.appendChild(activityImage);
         }, 300);
