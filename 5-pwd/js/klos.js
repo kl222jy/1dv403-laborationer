@@ -128,8 +128,8 @@
             closeA.onclick = function (e) {
                 e = e || event;
                 e.preventDefault();
-                desktop.removeChild(that.windowBody);
-                alert("kördes");
+                e.stopPropagation();
+                desktop.removeChild(klosWindow);
             };
             
             //End-CloseWindow
