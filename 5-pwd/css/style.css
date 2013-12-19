@@ -177,12 +177,26 @@ input[submit]
 {
     background-color: white;
     width: 100%;
-    
 }
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Window */
+.window header img
+{
+    z-index: 100;
+    float: right;
+}
+
+
+
+
+
+
+
+
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ImageViewer */
 .ImageViewerList
 {
-    width: 300px;
+    width: 350px;
     list-style: none;
     padding: 0;
     height: 300px;
@@ -192,4 +206,8 @@ input[submit]
 .ImageViewerList li
 {
     display: inline-block;
+    padding: 5px;
+    margin: 5px;
+    background-color: #ddd;
+    border-radius: 10px;
 }

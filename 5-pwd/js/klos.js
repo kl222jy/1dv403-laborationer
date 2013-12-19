@@ -56,7 +56,15 @@
         render = (function () {
             var klosWindow = document.createElement("article"),
                 titleBar = document.createElement("header"),
-                body = document.createElement("section");
+                body = document.createElement("section"),
+                closeImg = document.createElement("img"),
+                closeA = document.createElement("a");
+            
+            
+            
+            closeImg.setAttribute("src", "img/close.png");
+            closeImg.setAttribute("draggable", "false");
+            closeA.setAttribute("href", "#");
             
             klosWindow.setAttribute("class", "window");
             titleBar.textContent = name;
@@ -102,6 +110,7 @@
     
             titleBar.onmousedown = function (e) {
                 e = e || event;
+                e.preventDefault();
                 var css = getComputedStyle(klosWindow);
                 offsetX = parseInt(css.getPropertyValue("left"), 10) - e.clientX;
                 offsetY = parseInt(css.getPropertyValue("top"), 10) - e.clientY;
@@ -113,6 +122,23 @@
                 window.removeEventListener("mousemove", move, false);
             };
             //End-MoveWindow
+            
+            //Start-CloseWindow
+            
+            closeA.onclick = function (e) {
+                e = e || event;
+                e.preventDefault();
+                desktop.removeChild(that.windowBody);
+                alert("kördes");
+            };
+            
+            //End-CloseWindow
+            
+            
+            
+            closeA.appendChild(closeImg);
+            titleBar.appendChild(closeA);
+            
             klosWindow.appendChild(titleBar);
             klosWindow.appendChild(body);
             
