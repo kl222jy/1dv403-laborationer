@@ -3,8 +3,6 @@
     display: inline-block;
     border: 2px solid black;
     position: fixed;
-    left: 50px;
-    top: 50px;
     background-color: #fff;
 }
 
@@ -89,4 +87,8 @@
 .show
 {
     display: block !important;
+}
+.hide
+{
+    left: 9999px;
 }

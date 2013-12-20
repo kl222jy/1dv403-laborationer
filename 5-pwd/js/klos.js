@@ -1,14 +1,21 @@
-/*global window, event, document, console, alert, object, confirm, getComputedStyle, XMLHttpRequest*/
+/*global window, event, document, console, alert, object, confirm, getComputedStyle, XMLHttpRequest, setTimeout*/
 
 //(KLOS, undefined)? klagomål från jslint. 
 //Trevlig lösning, slipper window onload, bra hantering inför användning av fler moduler och möjlighet att skjuta in hänvisningar till andra moduler som argument i kortare form.
 (function (KLOS) {
     "use strict";
-    var menu, counter, MemoryGameID, WindowManager, AboutBox, inheritPrototype, Memory, MessageBoard, MessageBoardID, MessageBoardCounter;
-    
+    var menu, counter, MemoryGameID, WindowManager, AboutBox, inheritPrototype, Memory, MessageBoard, MessageBoardID, MessageBoardCounter, css, cssNav, windowPositionTimout;
+
     KLOS.desktop = document.querySelector("main");
+    css = getComputedStyle(KLOS.desktop);
+    cssNav = getComputedStyle(document.querySelector("nav"));
+    KLOS.desktopWidth = parseInt(css.width, 10);
+    KLOS.desktopHeight = parseInt(css.height, 10) - parseInt(cssNav.height, 10);
     
-    counter = 1;
+    KLOS.counter = 1;
+    KLOS.top = 15;
+    KLOS.left = 15;
+    KLOS.right = 15;
     MemoryGameID = 0;
     MessageBoardCounter = 1;
     MessageBoardID = 1;
@@ -64,9 +71,12 @@
         this.windowBody = null;
         this.windowStatusBar = null;
         
+        
+        
         that = this;
         render = (function () {
-            var klosWindow = document.createElement("article"),
+            var width, height,
+                klosWindow = document.createElement("article"),
                 titleBar = document.createElement("header"),
                 body = document.createElement("section"),
                 closeImg = document.createElement("img"),
@@ -175,7 +185,7 @@
             //Start-MoveWindow
             move = function (e) {
                 e = e || event;
-                klosWindow.setAttribute("style", "left: " + (offsetX + e.clientX) + "px; top: " + (offsetY + e.clientY) + "px; z-index: " + counter);
+                klosWindow.setAttribute("style", "left: " + (offsetX + e.clientX) + "px; top: " + (offsetY + e.clientY) + "px; z-index: " + KLOS.counter);
             };
     
             titleBar.onmousedown = function (e) {
@@ -211,6 +221,8 @@
             klosWindow.appendChild(toolBar);
             klosWindow.appendChild(body);
             klosWindow.appendChild(statusBar);
+       
+            klosWindow.classList.toggle("hide");
             
             that.windowIcon = icon;
             that.windowTitleBar = titleBar;
@@ -218,6 +230,46 @@
             that.windowToolBar = toolBarMenus;
             that.windowBody = body;
             KLOS.desktop.appendChild(klosWindow);
+            
+            //Start-placering
+            windowPositionTimout = setTimeout(function () {
+            
+                css = getComputedStyle(klosWindow);
+                width = parseInt(css.width, 10);
+                height = parseInt(css.height, 10);
+                
+//                if (((KLOS.top * 15) + KLOS.left + width) <= KLOS.desktopWidth && (KLOS.top * 15) + height <= KLOS.desktopHeight) {
+//                    klosWindow.setAttribute("style", "top: " + 15 * KLOS.top + "px; left: " + ((15 * KLOS.top) + KLOS.left) + "px;");
+//                    KLOS.top += 1;
+//                } else {
+//                    KLOS.top = 1;
+//                    KLOS.left += 50;
+//                    klosWindow.setAttribute("style", "top: " + 15 * KLOS.top + "px; left: " + (15 * KLOS.top) + KLOS.left + "px;");
+//                }
+
+                if (KLOS.left + width <= KLOS.desktopWidth || KLOS.top + height <= KLOS.desktopHeight) {
+                    if (KLOS.top + height <= KLOS.desktopHeight) {
+                        KLOS.top += 15;
+                    } else {
+                        KLOS.top = 15;
+                    }
+                    if (KLOS.left + width <= KLOS.desktopWidth) {
+                        KLOS.left += 15;
+                    } else {
+                        KLOS.left = 15;
+                    }
+                } else {
+                    KLOS.top = 15;
+                    KLOS.left = 15;
+                }
+                klosWindow.setAttribute("style", "top: " + KLOS.top + "px; left: " + KLOS.left + "px;");
+//                klosWindow.classList.add("show");
+                klosWindow.classList.toggle("hide");
+                
+                //End-placering
+                
+
+            }, 5);
         }());
     };
     
