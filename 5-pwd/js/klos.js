@@ -4,7 +4,7 @@
 //Trevlig lösning, slipper window onload, bra hantering inför användning av fler moduler och möjlighet att skjuta in hänvisningar till andra moduler som argument i kortare form.
 (function (KLOS) {
     "use strict";
-    var menu, counter, MemoryGameID, WindowManager, AboutBox, inheritPrototype, Memory, MessageBoard, MessageBoardID, MessageBoardCounter, css, cssNav, windowPositionTimout;
+    var menu, counter, MemoryGameID, WindowManager, AboutBox, inheritPrototype, Memory, MessageBoard, MessageBoardID, MessageBoardCounter, css, cssNav, windowPositionTimout, CustomEvent;
 
     KLOS.desktop = document.querySelector("main");
     css = getComputedStyle(KLOS.desktop);
@@ -70,7 +70,7 @@
         this.windowToolBar = null;
         this.windowBody = null;
         this.windowStatusBar = null;
-        
+        this.fullWindow = null;
         
         
         that = this;
@@ -185,7 +185,32 @@
             //Start-MoveWindow
             move = function (e) {
                 e = e || event;
-                klosWindow.setAttribute("style", "left: " + (offsetX + e.clientX) + "px; top: " + (offsetY + e.clientY) + "px; z-index: " + KLOS.counter);
+                var css, width, height, left, top;
+                css = getComputedStyle(klosWindow);
+                width = parseInt(css.width, 10);
+                height = parseInt(css.height, 10);
+                
+                left = offsetX + e.clientX;
+                top = offsetY + e.clientY;
+                
+                //max-höger
+                if (left + width >= KLOS.desktopWidth) {
+                    left = KLOS.desktopWidth - width;
+                }
+                //max-vänster
+                if (left <= 0) {
+                    left = 0;
+                }
+                //max-nedåt
+                if (top + height >= KLOS.desktopHeight) {
+                    top = KLOS.desktopHeight - height;
+                }
+                //max-uppåt
+                if (top <= 0) {
+                    top = 0;
+                }
+                
+                klosWindow.setAttribute("style", "left: " + left + "px; top: " + top + "px; z-index: " + KLOS.counter);
             };
     
             titleBar.onmousedown = function (e) {
@@ -224,6 +249,7 @@
        
             klosWindow.classList.toggle("hide");
             
+            that.fullWindow = klosWindow;
             that.windowIcon = icon;
             that.windowTitleBar = titleBar;
             that.windowStatusBar = statusBar;
@@ -232,21 +258,12 @@
             KLOS.desktop.appendChild(klosWindow);
             
             //Start-placering
-            windowPositionTimout = setTimeout(function () {
             
+            klosWindow.addEventListener("instanceReady", function () {
                 css = getComputedStyle(klosWindow);
                 width = parseInt(css.width, 10);
                 height = parseInt(css.height, 10);
                 
-//                if (((KLOS.top * 15) + KLOS.left + width) <= KLOS.desktopWidth && (KLOS.top * 15) + height <= KLOS.desktopHeight) {
-//                    klosWindow.setAttribute("style", "top: " + 15 * KLOS.top + "px; left: " + ((15 * KLOS.top) + KLOS.left) + "px;");
-//                    KLOS.top += 1;
-//                } else {
-//                    KLOS.top = 1;
-//                    KLOS.left += 50;
-//                    klosWindow.setAttribute("style", "top: " + 15 * KLOS.top + "px; left: " + (15 * KLOS.top) + KLOS.left + "px;");
-//                }
-
                 if (KLOS.left + width <= KLOS.desktopWidth || KLOS.top + height <= KLOS.desktopHeight) {
                     if (KLOS.top + height <= KLOS.desktopHeight) {
                         KLOS.top += 15;
@@ -263,13 +280,11 @@
                     KLOS.left = 15;
                 }
                 klosWindow.setAttribute("style", "top: " + KLOS.top + "px; left: " + KLOS.left + "px;");
-//                klosWindow.classList.add("show");
                 klosWindow.classList.toggle("hide");
-                
-                //End-placering
-                
+            }, false);
 
-            }, 5);
+            //End-placering
+
         }());
     };
     
@@ -288,9 +303,14 @@
         
         this.windowIcon.setAttribute("src", "img/about.png");
         
-        var aboutTag = document.createElement("p");
+        var instanceReady,
+            aboutTag = document.createElement("p");
         aboutTag.textContent = "Applikationen skapad av Kristoffer lind.";
         this.windowBody.appendChild(aboutTag);
+        
+        instanceReady = new KLOS.CustomEvent("instanceReady");
+        this.fullWindow.dispatchEvent(instanceReady);
+
     };
     
 //    KLOS.SimpleWindow = function (name) {
@@ -304,6 +324,20 @@
 //    
 //    inheritPrototype(KLOS.SimpleWindow, KLOS.WM);
 //    inheritPrototype(AboutBox, KLOS.SimpleWindow);
+    
+    
+    //start polyfill from https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+    CustomEvent = function (event, params) {
+        params = params || { bubbles: false, cancelable: false, detail: undefined };
+        var evt = document.createEvent('CustomEvent');
+        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        return evt;
+    };
+
+    CustomEvent.prototype = window.CustomEvent.prototype;
+
+    KLOS.CustomEvent = CustomEvent;
+    //end polyfill
     
     inheritPrototype(KLOS.MineSweeper, KLOS.WM);
     inheritPrototype(KLOS.RssReader, KLOS.WM);

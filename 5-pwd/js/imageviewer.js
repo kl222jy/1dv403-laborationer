@@ -6,7 +6,7 @@
     
     KLOS.ImageViewer = function () {
         KLOS.WM.call(this, "ImageViewer");
-        var xhr, images, imageListTag, max, i, imageLoadTimer, activityImage, that;
+        var xhr, images, imageListTag, max, i, imageLoadTimer, activityImage, that, instanceReady;
         
         this.windowIcon.setAttribute("src", "img/imageviewer.png");
         
@@ -66,11 +66,14 @@
         });
         
         this.windowBody.appendChild(imageListTag);
+        instanceReady = new KLOS.CustomEvent("instanceReady");
+        this.fullWindow.dispatchEvent(instanceReady);
     };
     
     KLOS.ImageView = function (image) {
         KLOS.WM.call(this, "ImageView");
-        var img = document.createElement("img"),
+        var instanceReady,
+            img = document.createElement("img"),
             toolBarEditMenu = document.createElement("ul"),
             toolBarEdit = document.createElement("li"),
             toolBarEditMenuSetBG = document.createElement("li");
@@ -82,6 +85,9 @@
         img.setAttribute("height", image.height);
         
         this.windowBody.appendChild(img);
+
+        instanceReady = new KLOS.CustomEvent("instanceReady");
+        this.fullWindow.dispatchEvent(instanceReady);
 
         toolBarEdit.textContent = "Redigera";
         toolBarEditMenuSetBG.textContent = "Sätt som bakgrund";

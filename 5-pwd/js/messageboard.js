@@ -53,7 +53,8 @@ KLOS.MessageBoard = function (name) {
             msgCountElement,
             offsetX,
             offsetY,
-            move;
+            move,
+            instanceReady;
 
         msgCountElement = elem("p", "msgCounter");
         msgCountElement.appendChild(document.createTextNode("Antal meddelanden: 0"));
@@ -109,6 +110,8 @@ KLOS.MessageBoard = function (name) {
         
 //        main = document.querySelector("main");
         that.windowBody.appendChild(boardFragment);
+        instanceReady = new KLOS.CustomEvent("instanceReady");
+        that.fullWindow.dispatchEvent(instanceReady);
     };
 
     renderMessage = function (message, date, index) {

@@ -6,7 +6,7 @@
         KLOS.WM.call(this, "RSS Reader");
         this.windowIcon.setAttribute("src", "img/rss.png");
         
-        var xhr, rss, that, imageLoadTimer, activityImage, url, changeFeed, getFeed, baseUrl,
+        var xhr, rss, that, imageLoadTimer, activityImage, url, changeFeed, getFeed, baseUrl, instanceReady,
             img = document.createElement("img"),
             toolBarEditMenu = document.createElement("ul"),
             toolBarEdit = document.createElement("li"),
@@ -62,6 +62,8 @@
             getFeed(url);
         };
 
+        instanceReady = new KLOS.CustomEvent("instanceReady");
+        this.fullWindow.dispatchEvent(instanceReady);
     };
     
 }(window.KLOS = window.KLOS || {}));
