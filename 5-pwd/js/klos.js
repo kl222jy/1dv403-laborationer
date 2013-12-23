@@ -4,7 +4,7 @@
 //Trevlig lösning, slipper window onload, bra hantering inför användning av fler moduler och möjlighet att skjuta in hänvisningar till andra moduler som argument i kortare form.
 (function (KLOS) {
     "use strict";
-    var menu, counter, MemoryGameID, WindowManager, AboutBox, inheritPrototype, Memory, MessageBoard, MessageBoardID, MessageBoardCounter, css, cssNav, windowPositionTimout, CustomEvent;
+    var menu, counter, MemoryGameID, WindowManager, AboutBox, inheritPrototype, Memory, MessageBoard, MessageBoardID, MessageBoardCounter, css, cssNav, windowPositionTimout, CustomEvent, blackout;
 
     KLOS.desktop = document.querySelector("main");
     css = getComputedStyle(KLOS.desktop);
@@ -75,12 +75,17 @@
         
         that = this;
         render = (function () {
-            var width, height,
+            var width, height, updateWindow, windowWidth, windowHeight, windowLeft, windowTop,
                 klosWindow = document.createElement("article"),
                 titleBar = document.createElement("header"),
                 body = document.createElement("section"),
                 closeImg = document.createElement("img"),
                 closeA = document.createElement("a"),
+                maxImg = document.createElement("img"),
+                maxA = document.createElement("a"),
+                minImg = document.createElement("img"),
+                minA = document.createElement("a"),
+
                 toolBar = document.createElement("section"),
                 toolBarMenus = document.createElement("ul"),
                 toolBarMenu = document.createElement("ul"),
@@ -88,7 +93,8 @@
                 toolBarMenuFileClose = document.createElement("li"),
                 statusBar = document.createElement("section"),
                 title = document.createElement("h1"),
-                icon = document.createElement("img");
+                icon = document.createElement("img"),
+                resizer = document.createElement("img");
      
             klosWindow.setAttribute("class", "window");
             body.setAttribute("class", name.replace(" ", ""));
@@ -101,6 +107,16 @@
             closeA.setAttribute("href", "#");
             closeA.setAttribute("class", "windowClose");
             
+            maxImg.setAttribute("src", "img/maximize.png");
+            maxImg.setAttribute("draggable", "false");
+            maxA.setAttribute("href", "#");
+            maxA.setAttribute("class", "windowMaximize");
+            
+            minImg.setAttribute("src", "img/minimize.png");
+            minImg.setAttribute("draggable", "false");
+            minA.setAttribute("href", "#");
+            minA.setAttribute("class", "windowMinimize");
+            
 
             icon.setAttribute("width", "20px");
             icon.setAttribute("height", "20px");
@@ -108,13 +124,17 @@
 
             title.textContent = name;
 
+            maxA.appendChild(maxImg);
+            minA.appendChild(minImg);
             closeA.appendChild(closeImg);
+
             titleBar.appendChild(closeA);
+            titleBar.appendChild(maxA);
+            titleBar.appendChild(minA);
             
             titleBar.appendChild(icon);
             titleBar.appendChild(title);
-            titleBar.appendChild(closeA);
-
+            
             //Start - Toolbar-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
             toolBar.setAttribute("class", "toolBar");
@@ -145,40 +165,47 @@
             //Start - Statusbar-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
             statusBar.setAttribute("class", "statusBar");
+            resizer.setAttribute("src", "img/resizer.png");
+            resizer.setAttribute("class", "windowResizer");
+            resizer.setAttribute("draggable", "false");
             
-            
-            
+            statusBar.appendChild(resizer);
             
             //Start Window funktioner-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            
             
             //Kommer bli problem med nedanstående, kontrollera om det går att skriva direkt till computed css eller liknande. 
             //Annars kommer den återgå till standardposition när storlek ändras och standardstorlek när den flyttas.
             //Alternativt ha variabler för alla värden och få med båda funktioners variabler i vardera style
             //Start-ResizeWindow
-//            resize = function (e) {
-//                var width, height;
-//                e = e || event;
-//                
-//                width = e.clientX - startOffsetX;
-//                height = e.clientY - startOffsetY;
-//                
+            resize = function (e) {
+                e = e || event;
+                
+                width = e.clientX - startOffsetX;
+                height = e.clientY - startOffsetY;
+                
 //                klosWindow.setAttribute("style", "width: " + width + "px; height: " + height + "px; z-index: " + counter);
-//            };
-//            
-//            body.onmousedown = function (e) {
-//                var css = getComputedStyle(klosWindow);
+                windowWidth = width;
+                windowHeight = height;
+                updateWindow();
+            };
+            
+            resizer.onmousedown = function (e) {
+                var css = getComputedStyle(klosWindow);
+                e = e || event;
+                e.preventDefault();
+                startOffsetX = parseInt(css.getPropertyValue("width"), 10) - e.clientX;
+                startOffsetY = parseInt(css.getPropertyValue("height"), 10) - e.clientY;
+                KLOS.counter += 1;
+                window.addEventListener("mousemove", resize, false);
+            };
+            
+//            document.onmouseup = function (e) {
 //                e = e || event;
-//                startOffsetX = parseInt(css.getPropertyValue("width"), 10) - e.clientX;
-//                startOffsetY = parseInt(css.getPropertyValue("height"), 10) - e.clientY;
-//                counter += 1;
-//                window.addEventListener("windowResize", resize, false);
+//                window.removeEventListener("mousemove", resize, false);
 //            };
-//            
-//            window.onmouseup = function (e) {
-//                e = e || event;
-//                window.removeEventListener("windowResize", resize, false);
-//            };
-//            
+            
             //End-ResizeWindow
             
             
@@ -210,7 +237,12 @@
                     top = 0;
                 }
                 
-                klosWindow.setAttribute("style", "left: " + left + "px; top: " + top + "px; z-index: " + KLOS.counter);
+                windowLeft = left;
+                windowTop = top;
+                
+                updateWindow();
+                
+//                klosWindow.setAttribute("style", "left: " + left + "px; top: " + top + "px; z-index: " + KLOS.counter);
             };
     
             titleBar.onmousedown = function (e) {
@@ -219,13 +251,16 @@
                 var css = getComputedStyle(klosWindow);
                 offsetX = parseInt(css.getPropertyValue("left"), 10) - e.clientX;
                 offsetY = parseInt(css.getPropertyValue("top"), 10) - e.clientY;
-                counter += 1;
+                KLOS.counter += 1;
                 window.addEventListener("mousemove", move, false);
             };
             window.onmouseup = function (e) {
                 e = e || event;
+                e.preventDefault();
                 window.removeEventListener("mousemove", move, false);
+                window.removeEventListener("mousemove", resize, false);
             };
+            
             //End-MoveWindow
             
             //Start-CloseWindow
@@ -237,7 +272,27 @@
                 KLOS.desktop.removeChild(klosWindow);
             };
             
+            maxA.onclick = function (e) {
+                e = e || event;
+                e.preventDefault();
+                e.stopPropagation();
+                windowLeft = 0;
+                windowTop = 0;
+                windowHeight = KLOS.desktopHeight;
+                windowWidth = KLOS.desktopWidth;
+                
+                updateWindow();
+            };
+            
+            minA.onclick = function (e) {
+                alert("ej implementerat!");
+            };
+            
             //End-CloseWindow
+            
+            updateWindow = function () {
+                klosWindow.setAttribute("style", "width: " + windowWidth + "px; height: " + windowHeight + "px; z-index: " + KLOS.counter + "; left: " + windowLeft + "px; top: " + windowTop + "px;");
+            };
             
             //END WINDOW FUNKTIONER-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
@@ -279,7 +334,13 @@
                     KLOS.top = 15;
                     KLOS.left = 15;
                 }
-                klosWindow.setAttribute("style", "top: " + KLOS.top + "px; left: " + KLOS.left + "px;");
+                
+                windowLeft = KLOS.left;
+                windowTop = KLOS.top;
+                
+                updateWindow();
+                
+//                klosWindow.setAttribute("style", "top: " + KLOS.top + "px; left: " + KLOS.left + "px;");
                 klosWindow.classList.toggle("hide");
             }, false);
 
@@ -304,9 +365,23 @@
         this.windowIcon.setAttribute("src", "img/about.png");
         
         var instanceReady,
-            aboutTag = document.createElement("p");
-        aboutTag.textContent = "Applikationen skapad av Kristoffer lind.";
+            aboutTag = document.createElement("p"),
+            aTag = document.createElement("a"),
+            aTag2 = document.createElement("a"),
+            brTag = document.createElement("br");
+        
+        aTag.setAttribute("href", "https://www.iconfinder.com/iconsets/windows8_icons_iconpharm");
+        aTag.textContent = "win8 icons by iconpharm";
+        
+        aTag2.setAttribute("href", "https://www.iconfinder.com/search/?q=iconset%3APrimo_Icons");
+        aTag2.textContent = "Primo Icons";
+        
+        aboutTag.textContent = "Applikationen skapad av Kristoffer lind. Ikoner från iconfinder har använts, länkar till dessa nedan.";
         this.windowBody.appendChild(aboutTag);
+        this.windowBody.appendChild(aTag);
+        this.windowBody.appendChild(brTag);
+        this.windowBody.appendChild(aTag2);
+        
         
         instanceReady = new KLOS.CustomEvent("instanceReady");
         this.fullWindow.dispatchEvent(instanceReady);
@@ -347,13 +422,32 @@
     inheritPrototype(KLOS.Memory, KLOS.WM);
     inheritPrototype(KLOS.MessageBoard, KLOS.WM);
     
-    KLOS.XhrCon = function (url, callback) {
+    //från mozilla-dev
+    
+//    KLOS.evaluateXPath = function (aNode, aExpr) {
+//        var xpe = new XPathEvaluator(),
+//            nsResolver = xpe.createNSResolver(aNode.ownerDocument == null ? aNode.documentElement : aNode.ownerDocument.documentElement),
+//            result = xpe.evaluate(aExpr, aNode, nsResolver, 0, null),
+//            found = [],
+//            res;
+//        
+//        while (res = result.iterateNext())
+//        found.push(res);
+//        return found;
+//    }
+    
+    
+    KLOS.XhrCon = function (url, callback, xmlResponse) {
         var xhr = new XMLHttpRequest();
         
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if ((xhr.status >= 200 && xhr.status) < 300 || xhr.status === 304) {
-                    callback(xhr.responseText);
+                    if (xmlResponse === true) {
+                        callback(xhr.responseXML);
+                    } else {
+                        callback(xhr.responseText);
+                    }
 //                    return JSON.parse(xhr.responseText);
                 } else {
                     console.log("Fel vid inläsning, xhr.status: " + xhr.status);
@@ -364,6 +458,37 @@
         xhr.open("get", url, true);
         xhr.send(null);
     };
+   
+    KLOS.showModal = function (innerModal) {
+        var modal = document.createElement("section");
+        
+        blackout = document.createElement("section");
+        
+        blackout.setAttribute("class", "blackout");
+        modal.setAttribute("class", "modal");
+        
+        blackout.onclick = function (e) {
+            e = e || event;
+            e.preventDefault();
+            e.stopPropagation();
+            KLOS.removeModal();
+        };
+        
+        modal.onclick = function (e) {
+            e = e || event;
+//            e.preventDefault();
+            e.stopPropagation();
+        };
+        
+        
+        
+        modal.appendChild(innerModal);
+        blackout.appendChild(modal);
+        document.body.appendChild(blackout);
+    };
     
+    KLOS.removeModal = function () {
+        document.body.removeChild(blackout);
+    };
     
 }(window.KLOS = window.KLOS || {}));

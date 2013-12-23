@@ -1,4 +1,4 @@
-/*global window, event, document, console, alert, object, confirm, getComputedStyle, XMLHttpRequest, setTimeout, escape, clearTimeout, prompt*/
+/*global window, event, document, console, alert, object, confirm, getComputedStyle, XMLHttpRequest, setTimeout, escape, clearTimeout, prompt, clearInterval, setInterval*/
 (function (KLOS) {
     "use strict";
     
@@ -6,15 +6,21 @@
         KLOS.WM.call(this, "RSS Reader");
         this.windowIcon.setAttribute("src", "img/rss.png");
         
-        var xhr, rss, that, imageLoadTimer, activityImage, url, changeFeed, getFeed, baseUrl, instanceReady,
+        var xhr, rss, that, imageLoadTimer, activityImage, url, changeFeed, getFeed, baseUrl, instanceReady, setFeedUpdate, setUpdate, feedUpdate,
             img = document.createElement("img"),
             toolBarEditMenu = document.createElement("ul"),
             toolBarEdit = document.createElement("li"),
-            toolBarEditMenuSetRSS = document.createElement("li");
+            toolBarEditMenuSetRSS = document.createElement("li"),
+            toolBarEditMenuUpdate = document.createElement("li"),
+            toolBarEditMenuUpdateFreq = document.createElement("li"),
+            lastUpdate = document.createElement("p");
 
-        toolBarEdit.textContent = "Redigera";
-        toolBarEditMenuSetRSS.textContent = "Byt rss-flöde";
-
+        toolBarEdit.textContent = "Inställningar";
+        toolBarEditMenuSetRSS.textContent = "Välj källa..";
+        toolBarEditMenuUpdate.textContent = "Uppdatera nu";
+        toolBarEditMenuUpdateFreq.textContent = "Uppdateringsfrekvens..";
+        
+        
         toolBarEdit.onclick = function () {
             toolBarEditMenu.classList.toggle("show");
             return false;
@@ -24,7 +30,17 @@
             changeFeed();
         };
         
+        toolBarEditMenuUpdate.onclick = function () {
+            getFeed(url);
+        };
+
+        toolBarEditMenuUpdateFreq.onclick = function () {
+            setFeedUpdate();
+        };
+        
         toolBarEditMenu.appendChild(toolBarEditMenuSetRSS);
+        toolBarEditMenu.appendChild(toolBarEditMenuUpdate);
+        toolBarEditMenu.appendChild(toolBarEditMenuUpdateFreq);
         toolBarEdit.appendChild(toolBarEditMenu);
 
         this.windowToolBar.appendChild(toolBarEdit);
@@ -34,7 +50,8 @@
         
 
         
-        getFeed = function (url) {
+        getFeed = function () {
+            var now = new Date();
             imageLoadTimer = setTimeout(function () {
                 activityImage = document.createElement("img");
                 activityImage.setAttribute("src", "img/activity.gif");
@@ -48,18 +65,150 @@
                 that.windowBody.innerHTML = data;
                 clearTimeout(imageLoadTimer);
                 
+                lastUpdate.textContent = now.toLocaleTimeString();
+                
                 if (that.windowStatusBar.contains(activityImage)) {
                     that.windowStatusBar.removeChild(activityImage);
                 }
+                
+                if (that.windowStatusBar.contains(lastUpdate)) {
+                    that.windowStatusBar.removeChild(lastUpdate);
+                }
+                
+                that.windowStatusBar.appendChild(lastUpdate);
+                
             });
         };
         
+        setUpdate = function (updateTimer) {
+            clearInterval(feedUpdate);
+            feedUpdate = setInterval(getFeed, updateTimer * 60000);
+        };
+        
         getFeed(url);
+        setUpdate(1);
         
         changeFeed = function () {
-            url = prompt("välj feed");
-            console.log(getFeed);
-            getFeed(url);
+//            url = prompt("välj feed");
+//            console.log(getFeed);
+//            getFeed(url);
+            var pTag = document.createElement("p"),
+                radioLH = document.createElement("input"),
+                feedChooser = document.createElement("form"),
+                divLH = document.createElement("div"),
+                descLH = document.createElement("p"),
+                radioTNW = document.createElement("input"),
+                divTNW = document.createElement("div"),
+                descTNW = document.createElement("p"),
+                innerModal = document.createElement("section"),
+                radioCustom = document.createElement("input"),
+                divCustom = document.createElement("div"),
+                textboxCustom = document.createElement("input"),
+                chooseFeed = document.createElement("button");
+
+            pTag.textContent =  "Välj ett flöde i listan eller skriv in ett eget.";
+            
+            radioLH.setAttribute("type", "radio");
+            radioLH.setAttribute("value", "http://feeds.gawker.com/lifehacker/full.xml");
+            radioLH.setAttribute("name", "feed");
+            descLH.textContent = "Lifehacker";
+            divLH.appendChild(radioLH);
+            divLH.appendChild(descLH);
+            
+            radioTNW.setAttribute("type", "radio");
+            radioTNW.setAttribute("value", "http://thenextweb.com/feed/");
+            radioTNW.setAttribute("name", "feed");
+            descTNW.textContent = "The Next Web";
+            divTNW.appendChild(radioTNW);
+            divTNW.appendChild(descTNW);
+            
+            radioCustom.setAttribute("type", "radio");
+            radioCustom.setAttribute("value", "custom");
+            radioCustom.setAttribute("name", "feed");
+            textboxCustom.setAttribute("type", "text");
+            textboxCustom.setAttribute("placeholder", "Annat rss-flöde");
+            divCustom.appendChild(radioCustom);
+            divCustom.appendChild(textboxCustom);
+            
+            chooseFeed.textContent = "Välj flöde";
+            
+            chooseFeed.onclick = function (e) {
+                e = e || event;
+                e.preventDefault();
+                var i;
+
+                for (i = 0; i < feedChooser.feed.length; i += 1) {
+                    if (feedChooser.feed[i].checked === true) {
+                        if (feedChooser.feed[i].value === "custom") {
+                            url = textboxCustom.value;
+                        } else {
+                            url = feedChooser.feed[i].value;
+                        }
+                    }
+                }
+                
+                
+                getFeed(url);
+                KLOS.removeModal();
+            };
+            
+            
+            
+            feedChooser.appendChild(divLH);
+            feedChooser.appendChild(divTNW);
+            feedChooser.appendChild(divCustom);
+            feedChooser.appendChild(chooseFeed);
+
+            innerModal.appendChild(pTag);
+            innerModal.appendChild(feedChooser);
+            
+            KLOS.showModal(innerModal);
+        };
+        
+        
+        setFeedUpdate = function () {
+            var pTag = document.createElement("p"),
+                selectUpdate = document.createElement("select"),
+                option1min = document.createElement("option"),
+                option2min = document.createElement("option"),
+                option3min = document.createElement("option"),
+                option4min = document.createElement("option"),
+                option5min = document.createElement("option"),
+                innerModal = document.createElement("section"),
+                formUpdate = document.createElement("form"),
+                chooseUpdateFreq = document.createElement("button");
+                
+            pTag.textContent = "Nedan kan du välja hur ofta rss-flödet ska uppdateras. Välj frekvens.";
+            option1min.setAttribute("value", "1");
+            option1min.textContent = "1 Minut";
+            option2min.setAttribute("value", "2");
+            option2min.textContent = "2 Minuter";
+            option3min.setAttribute("value", "3");
+            option3min.textContent = "3 Minuter";
+            option4min.setAttribute("value", "4");
+            option4min.textContent = "4 Minuter";
+            option5min.setAttribute("value", "5");
+            option5min.textContent = "5 Minuter";
+            
+            selectUpdate.appendChild(option1min);
+            selectUpdate.appendChild(option2min);
+            selectUpdate.appendChild(option3min);
+            selectUpdate.appendChild(option4min);
+            selectUpdate.appendChild(option5min);
+            
+            chooseUpdateFreq.textContent = "Välj";
+            
+            chooseUpdateFreq.onclick = function () {
+                setUpdate(selectUpdate.options[selectUpdate.selectedIndex].value);
+                KLOS.removeModal();
+            };
+            
+            formUpdate.appendChild(selectUpdate);
+            formUpdate.appendChild(chooseUpdateFreq);
+            innerModal.appendChild(pTag);
+            innerModal.appendChild(formUpdate);
+            
+            KLOS.showModal(innerModal);
         };
 
         instanceReady = new KLOS.CustomEvent("instanceReady");
