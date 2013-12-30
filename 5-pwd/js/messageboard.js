@@ -1,10 +1,16 @@
-/*global window, event, document, getComputedStyle, alert, confirm, console, Message, setTimeout, DOMParser */
+/*global window, event, document, getComputedStyle, alert, confirm, console, Message, setTimeout, DOMParser, XMLHttpRequest, clearTimeout, clearInterval, setInterval, localStorage */
 
 (function (KLOS) {
     "use strict";
     KLOS.MessageBoard = function (name) {
         KLOS.WM.call(this, "MessageBoard");
-        var elem, renderMsgBox, that, renderMessage, renderMessages, getMessages, imageLoadTimer, activityImage, xhr, history, msgSection, highestId;
+        var elem, updateTime, renderMsgBox, that, renderMessage, renderMessages, getMessages, imageLoadTimer, activityImage, xhr, history, msgSection, highestId, textarea, sendMessage, updateBoard, addToolbarChoice, chooseUpdateInterval, chooseMessagesAmount, chooseAuthorName, username, saveSettings, loadSettings,
+            toolBarSettingsMenu = document.createElement("ul"),
+            toolBarSettings = document.createElement("li"),
+            toolBarSettingsUpdateInterval = document.createElement("li"),
+            toolBarSettingsMessages = document.createElement("li"),
+            toolBarSettingsAuthor = document.createElement("li"),
+            toolBarSettingsUpdate = document.createElement("li");
         
         this.windowIcon.setAttribute("src", "img/messageboard.png");
         
@@ -12,9 +18,12 @@
         
         this.messages = [];
     
-        history = 10;
+        history = 50;
+        updateTime = 10000;
+        username = "Anonym";
+        highestId = 0;
         
-        getMessages = function (history) {
+        getMessages = function (noUpdate) {
             imageLoadTimer = setTimeout(function () {
                 activityImage = document.createElement("img");
                 activityImage.setAttribute("src", "img/activity.gif");
@@ -25,71 +34,76 @@
             
             
             xhr = KLOS.XhrCon("http://homepage.lnu.se/staff/tstjo/labbyserver/getMessage.php?history=" + history, function (data) {
-                var article, footer, section, author, time, getNode, messages, i, xpe, parser = new DOMParser(),
+                var timestring, tempId,  article, msgInfo, msgText, author, time, getNode, messages, i, xpe, parser = new DOMParser(),
                     doc = parser.parseFromString(data, "application/xml");
-                
+
+                clearTimeout(imageLoadTimer);
 
                 messages = doc.getElementsByTagName("message");
                 
                 getNode = function (node, search) {
                     if (node.getElementsByTagName(search)[0].childNodes[0]) {
                         return node.getElementsByTagName(search)[0].childNodes[0].nodeValue;
+                    } else {
+                        return "";
                     }
                 };
                 
                 for (i = 0; i < messages.length; i += 1) {
                     
-                    if (getNode(messages[i], "id") < highestId) {
-                        console.log(messages[i]);
-                        console.log(getNode(messages[i], "id"));
-                        console.log(getNode(messages[i], "author"));
-                        console.log(getNode(messages[i], "text"));
-                        console.log(getNode(messages[i], "time"));
+                    tempId = getNode(messages[i], "id");
+
+                    if (tempId > highestId) {
                         
                         article = document.createElement("article");
-                        section = document.createElement("section");
-                        footer = document.createElement("footer");
+                        msgText = document.createElement("section");
+                        msgInfo = document.createElement("section");
                         author = document.createElement("p");
                         time = document.createElement("p");
+                        timestring = new Date(parseInt(getNode(messages[i], "time"), 10));
                         
-                        section.textContent = getNode(messages[i], "text");
+                        article.setAttribute("class", "msgItem");
+                        author.setAttribute("class", "msgAuthor");
+                        time.setAttribute("class", "msgTime");
+                        msgInfo.setAttribute("class", "msgInfo");
+                        msgText.setAttribute("class", "msgText");
+                        
+                        msgText.textContent = getNode(messages[i], "text");
                         author.textContent = getNode(messages[i], "author");
-                        time.textContent = getNode(messages[i], "time");
+                        time.textContent = timestring.toLocaleString();
                         
-                        footer.appendChild(author);
-                        footer.appendChild(time);
-                        article.appendChild(section);
-                        article.appendChild(footer);
+                        msgInfo.appendChild(author);
+                        msgInfo.appendChild(time);
+                        article.appendChild(msgInfo);
+                        article.appendChild(msgText);
                         
                         msgSection.appendChild(article);
                         
                         highestId = getNode(messages[i], "id");
                     }
-                    
-//                    that.messages.push(new KLOS.MessageBoard.Message(getNode(messages[i], "text"), getNode(messages[i], "time")));
                 }
-                
-//                renderMessages();
+                msgSection.scrollTop = msgSection.scrollHeight;
+                if (that.windowStatusBar.contains(activityImage)) {
+                    that.windowStatusBar.removeChild(activityImage);
+                }
+                if (KLOS.desktop.contains(that.fullWindow) && noUpdate !== true) {
+                    setTimeout(getMessages, updateTime);
+                }
             }, false);
         };
         
-        getMessages(50);
+        getMessages();
         
         that = this;
-//        this.sendMessage = function () {
-//            var input = document.querySelector("#" + name + " textarea").value,
-//                messages = that.messages;
-//            
-//            messages.push(new KLOS.MessageBoard.Message(input, new Date()));
-//            renderMessages();
-//        };
-//        
-//        this.removeMessage = function (index) {
-//            if (confirm("Är du helt säker på att du vill ta bort meddelandet?")) {
-//                that.messages.splice(index, 1);
-//                renderMessages();
-//            }
-//        };
+        sendMessage = function (message) {
+            var xhr = new XMLHttpRequest();
+            
+            xhr.open("POST", "http://homepage.lnu.se/staff/tstjo/labbyserver/setMessage.php", true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send("username=" + username + "&text=" + message);
+            getMessages(true);
+        };
+
         elem = function (elemName, elemClass, elemId) {
             var elem = document.createElement(elemName);
             if (elemClass) {
@@ -106,7 +120,6 @@
                 article = elem("article", "msgBoard", name),
                 inputSection = elem("section", "inputBox"),
                 form = elem("form"),
-                textarea = elem("textarea"),
                 content,
                 main,
                 inputButton,
@@ -117,47 +130,27 @@
                 move,
                 instanceReady;
             
+            textarea = elem("textarea");
             msgSection = elem("section", "msgBox");
             msgCountElement = elem("p", "msgCounter");
             msgCountElement.appendChild(document.createTextNode("Antal meddelanden: 0"));
             
             header = elem("header", "msgBoxHeader");
             header.appendChild(document.createTextNode(name));
-            
-//            article.setAttribute("style", "z-index: " + KLOS.counter);
-//            
-//            move = function (e) {
-//                e = e || event;
-//                article.setAttribute("style", "left: " + (offsetX + e.clientX) + "px; top: " + (offsetY + e.clientY) + "px; z-index: " + KLOS.counter);
-//            };
-//    
-//            article.onmousedown = function (e) {
-//                e = e || event;
-//                var css = getComputedStyle(article);
-//                offsetX = parseInt(css.getPropertyValue("left"), 10) - e.clientX;
-//                offsetY = parseInt(css.getPropertyValue("top"), 10) - e.clientY;
-//                KLOS.counter += 1;
-//    //            article.setAttribute("z-index", MessageSystem.counter);
-//                window.addEventListener("mousemove", move, false);
-//            };
-//            article.onmouseup = function (e) {
-//                e = e || event;
-//                window.removeEventListener("mousemove", move, false);
-//            };
-//            
+
             inputButton = elem("input");
             inputButton.type = "button";
             inputButton.value = "skriv";
             inputButton.onclick = function (e) {
                 e = e || event;
-                that.sendMessage();
+                sendMessage(textarea.value);
                 document.querySelector("#" + that.name + " textarea").value = "";
                 return false;
             };
             textarea.onkeypress = function (e) {
                 e = e || event;
                 if (e.keyCode === 13  && (!e.shiftKey)) {
-                    that.sendMessage();
+                    sendMessage(textarea.value);
                     document.querySelector("#" + that.name + " textarea").value = "";
                     return false;
                 } else {
@@ -170,78 +163,188 @@
             boardFragment.appendChild(msgSection);
             boardFragment.appendChild(inputSection).appendChild(form).appendChild(textarea).parentElement.appendChild(inputButton);
             
-    //        main = document.querySelector("main");
             that.windowBody.appendChild(boardFragment);
             instanceReady = new KLOS.CustomEvent("instanceReady");
             that.fullWindow.dispatchEvent(instanceReady);
         };
-    
-//        renderMessage = function (message, date, index) {
-//            var msgItem = elem("article", "msgItem"),
-//                msgContent = elem("section", "msgContent"),
-//                footer = elem("footer", "msgInfo"),
-//                msgFragment = document.createDocumentFragment(),
-//                msgTextNode = document.createTextNode(message),
-//                msgDateNode = document.createTextNode(date),
-//                msgADelete = elem("a", "imgDelete"),
-//                msgDelete = elem("img", "imgDelete"),
-//                msgATime = elem("a", "imgTime"),
-//                msgTime = elem("img", "imgTime"),
-//                content,
-//                msgBox;
-//            
-//            msgADelete.setAttribute("href", "#");
-//            msgDelete.setAttribute("src", "img/delete.png");
-//            msgDelete.alt = "Delete";
-//            msgADelete.onclick = function () {
-//                that.removeMessage(index);
-//            };
-//    
-//            msgATime.setAttribute("href", "#");
-//            msgTime.setAttribute("src", "img/time.png");
-//            msgTime.alt = "Time";
-//            msgATime.onclick = function () {
-//                alert(that.messages[index].dateText());
-//            };
-//            
-//            msgContent.innerHTML = message;
-//    
-//            msgFragment = msgFragment.appendChild(msgItem);
-//            msgFragment.appendChild(msgADelete).appendChild(msgDelete);
-//            msgFragment.appendChild(msgATime).appendChild(msgTime);
-//            msgFragment.appendChild(msgContent);         //.innerHTML(message);        //.innerHTML(message);         //.appendChild(msgTextNode); 
-//            msgFragment.appendChild(footer).appendChild(msgDateNode);
-//    
-//            
-//            return msgFragment;
-//        };
-//        
-//        renderMessages = function () {
-//            var i, message, msgItems, msgBox, msgCounter, msgCountElement, msgList = document.createDocumentFragment();
-//    
-//            for (i = 0; i < that.messages.length; i += 1) {
-//                message = renderMessage(that.messages[i].htmlText(), that.messages[i].date.toLocaleTimeString(), i);
-//                msgList.appendChild(message);
-//            }
-//            msgBox = document.querySelector("#" + that.name + " .msgBox");
-//            msgBox.innerHTML = "";
-//            msgBox.appendChild(msgList);
-//            
-//            msgBox.scrollTop = msgBox.scrollHeight;
-//    
-//            msgCountElement = elem("p", "msgCounter");
-//            msgCountElement.appendChild(document.createTextNode("Antal meddelanden: " + that.messages.length));
-//            
-//            if (document.querySelector("#" + that.name + " .msgCounter")) {
-//                document.querySelector("#" + that.name + " .inputBox").removeChild(document.querySelector("#" + that.name + " .msgCounter"));
-//                document.querySelector("#" + that.name + " .inputBox").appendChild(msgCountElement);
-//            } else {
-//                document.querySelector("#" + that.name + " .inputBox").appendChild(msgCountElement);
-//            }
-//        };
-//    
-//        
+
         renderMsgBox(name);
         
+        
+        chooseUpdateInterval = function () {
+            var pTag = document.createElement("p"),
+                selectUpdate = document.createElement("select"),
+                option10s = document.createElement("option"),
+                option20s = document.createElement("option"),
+                option30s = document.createElement("option"),
+                option40s = document.createElement("option"),
+                option50s = document.createElement("option"),
+                option60s = document.createElement("option"),
+                innerModal = document.createElement("section"),
+                formUpdate = document.createElement("form"),
+                chooseUpdateFreq = document.createElement("button");
+                
+            pTag.textContent = "Nedan kan du välja hur ofta meddelanden ska hämtas.";
+            option10s.setAttribute("value", "10");
+            option10s.textContent = "10 Sekunder";
+            option20s.setAttribute("value", "20");
+            option20s.textContent = "20 Sekunder";
+            option30s.setAttribute("value", "30");
+            option30s.textContent = "30 Sekunder";
+            option40s.setAttribute("value", "40");
+            option40s.textContent = "40 Sekunder";
+            option50s.setAttribute("value", "50");
+            option50s.textContent = "50 Sekunder";
+            option60s.setAttribute("value", "60");
+            option60s.textContent = "1 Minut";
+            
+            selectUpdate.appendChild(option10s);
+            selectUpdate.appendChild(option20s);
+            selectUpdate.appendChild(option30s);
+            selectUpdate.appendChild(option40s);
+            selectUpdate.appendChild(option50s);
+            selectUpdate.appendChild(option60s);
+
+            
+            chooseUpdateFreq.textContent = "Välj";
+            
+            chooseUpdateFreq.onclick = function () {
+                updateTime = selectUpdate.options[selectUpdate.selectedIndex].value * 1000;
+                getMessages(true);
+                KLOS.removeModal();
+            };
+            
+            formUpdate.appendChild(selectUpdate);
+            formUpdate.appendChild(chooseUpdateFreq);
+            innerModal.appendChild(pTag);
+            innerModal.appendChild(formUpdate);
+            
+            KLOS.showModal(innerModal);
+        };
+        
+        chooseMessagesAmount = function () {
+            var pTag = document.createElement("p"),
+                selectMessages = document.createElement("select"),
+                option10 = document.createElement("option"),
+                option20 = document.createElement("option"),
+                option30 = document.createElement("option"),
+                option40 = document.createElement("option"),
+                option50 = document.createElement("option"),
+                innerModal = document.createElement("section"),
+                formUpdate = document.createElement("form"),
+                setMessagesAmount = document.createElement("button");
+                
+            pTag.textContent = "Nedan kan du välja hur ofta meddelanden ska hämtas.";
+            option10.setAttribute("value", "10");
+            option10.textContent = "10 Meddelanden";
+            option20.setAttribute("value", "20");
+            option20.textContent = "20 Meddelanden";
+            option30.setAttribute("value", "30");
+            option30.textContent = "30 Meddelanden";
+            option40.setAttribute("value", "40");
+            option40.textContent = "40 Meddelanden";
+            option50.setAttribute("value", "50");
+            option50.textContent = "50 Meddelanden";
+            
+            selectMessages.appendChild(option10);
+            selectMessages.appendChild(option20);
+            selectMessages.appendChild(option30);
+            selectMessages.appendChild(option40);
+            selectMessages.appendChild(option50);
+
+            setMessagesAmount.textContent = "Välj";
+            
+            setMessagesAmount.onclick = function () {
+                history = selectMessages.options[selectMessages.selectedIndex].value;
+                getMessages(true);
+                KLOS.removeModal();
+            };
+            
+            formUpdate.appendChild(selectMessages);
+            formUpdate.appendChild(setMessagesAmount);
+            innerModal.appendChild(pTag);
+            innerModal.appendChild(formUpdate);
+            
+            KLOS.showModal(innerModal);
+        };
+        
+        chooseAuthorName = function () {
+            var pTag = document.createElement("p"),
+                setNameTextbox = document.createElement("input"),
+                innerModal = document.createElement("section"),
+                setNameForm = document.createElement("form"),
+                setNameButton = document.createElement("button");
+            
+            pTag.textContent = "Välj användarnamn";
+            setNameTextbox.setAttribute("type", "text");
+            setNameTextbox.setAttribute("value", username);
+            setNameButton.textContent = "Välj";
+            
+            setNameButton.onclick = function () {
+                username = setNameTextbox.value;
+                saveSettings();
+                KLOS.removeModal();
+            };
+            
+            setNameForm.appendChild(setNameTextbox);
+            setNameForm.appendChild(setNameButton);
+            innerModal.appendChild(pTag);
+            innerModal.appendChild(setNameForm);
+            
+            KLOS.showModal(innerModal);
+        };
+        
+
+        toolBarSettings.textContent = "Inställningar";
+        toolBarSettingsUpdateInterval.textContent = "Uppdateringsintervall..";
+        toolBarSettingsMessages.textContent = "Antal meddelanden..";
+        toolBarSettingsAuthor.textContent = "Alias..";
+        toolBarSettingsUpdate.textContent = "Uppdatera nu";
+        
+        toolBarSettings.onclick = function () {
+            toolBarSettingsMenu.classList.toggle("show");
+            return false;
+        };
+        
+        toolBarSettingsUpdateInterval.onclick = function () {
+            chooseUpdateInterval();
+        };
+        
+        toolBarSettingsMessages.onclick = function () {
+            chooseMessagesAmount();
+        };
+        
+        toolBarSettingsAuthor.onclick = function () {
+            chooseAuthorName();
+        };
+
+        toolBarSettingsUpdate.onclick = function () {
+            getMessages(true);      //noUpdate = true för att undvika fler intervall
+        };
+
+
+        toolBarSettingsMenu.appendChild(toolBarSettingsUpdateInterval);
+        toolBarSettingsMenu.appendChild(toolBarSettingsMessages);
+        toolBarSettingsMenu.appendChild(toolBarSettingsAuthor);
+        toolBarSettingsMenu.appendChild(toolBarSettingsUpdate);
+        toolBarSettings.appendChild(toolBarSettingsMenu);
+        
+        this.windowToolBar.appendChild(toolBarSettings);
+        
+        loadSettings = function () {
+            if (localStorage.username && localStorage.updateTime && localStorage.history) {
+                username = localStorage.username;
+                updateTime = localStorage.updateTime;
+                history = localStorage.history;
+            }
+        };
+        
+        loadSettings();
+        
+        saveSettings = function () {
+            localStorage.username = username;
+            localStorage.updateTime = updateTime;
+            localStorage.history = history;
+        };
     };
 }(window.KLOS = window.KLOS || {}));

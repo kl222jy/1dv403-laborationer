@@ -201,10 +201,11 @@
                 window.addEventListener("mousemove", resize, false);
             };
             
-//            document.onmouseup = function (e) {
-//                e = e || event;
-//                window.removeEventListener("mousemove", resize, false);
-//            };
+            document.onmouseup = function (e) {
+                e = e || event;
+                e.preventDefault();
+                window.removeEventListener("mousemove", resize, false);
+            };
             
             //End-ResizeWindow
             
@@ -212,6 +213,7 @@
             //Start-MoveWindow
             move = function (e) {
                 e = e || event;
+                e.preventDefault();
                 var css, width, height, left, top;
                 css = getComputedStyle(klosWindow);
                 width = parseInt(css.width, 10);
@@ -254,12 +256,14 @@
                 KLOS.counter += 1;
                 window.addEventListener("mousemove", move, false);
             };
-            window.onmouseup = function (e) {
+            
+            titleBar.onmouseup = function (e) {             //Problem om fönstret inte hängt med och mouseup sker på window, men lägger jag eventet på window så släpps inte fönstret efter att förflyttning av ett annat fönster gjorts innan samma fönster flyttas igen, då släpps inte fönstret.. eventet avfyras inte då? Lösningen kan vara att köra preventdefault på mousedown på window, men då får jag väl istället problem med att onclick aldrig fungerar.
                 e = e || event;
                 e.preventDefault();
                 window.removeEventListener("mousemove", move, false);
-                window.removeEventListener("mousemove", resize, false);
+//                window.removeEventListener("mousemove", resize, false);
             };
+            
             
             //End-MoveWindow
             

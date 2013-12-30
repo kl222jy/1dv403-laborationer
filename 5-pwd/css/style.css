@@ -382,58 +382,27 @@ nav img {
   width: 75px;
   cursor: pointer; }
 
+.MessageBoard {
+  height: inherit;
+  width: inherit; }
+
 .msgBoard {
-  width: 500px;
+  height: 100%;
   margin: 10px;
   background-color: white; }
 
 input[submit] {
   color: black; }
 
-.msgBoxHeader {
-  display: none;
-  font-size: 24px;
-  text-align: center;
-  padding: 10px;
-  color: white;
-  background-color: grey;
-  border-bottom: 5px solid black; }
-
-.msgBox {
-  height: 400px;
-  overflow-y: auto; }
-
-.msgBox img {
-  vertical-align: top;
-  float: right;
-  width: 25px;
-  cursor: pointer; }
-
-.msgBox footer {
-  text-align: right;
-  vertical-align: bottom; }
-
-.msgContent {
-  padding: 10px;
-  text-align: left;
-  word-wrap: break-word; }
-
-.msgItem:nth-child(2n) {
-  background-color: #f0f5ff; }
-
-.inputBox {
-  vertical-align: top; }
-
 .inputBox textarea {
   display: block;
-  width: 400px;
+  width: 100%;
   height: 50px;
   margin: 0;
-  resize: none;
-  float: left; }
+  resize: none; }
 
 .inputBox input {
-  width: 90px;
+  width: 100%;
   height: 50px;
   display: block;
   margin: 0; }
@@ -441,6 +410,63 @@ input[submit] {
 .msgCounter {
   float: right; }
 
+.msgBoxHeader {
+  display: none; }
+
+.msgBox {
+  height: calc(100% - 110px);
+  overflow-y: auto; }
+
+.msgItem:nth-child(2n) {
+  background-color: #f0f5ff; }
+
+.msgItem {
+  text-align: left; }
+
+.msgAuthor {
+  float: left; }
+
+.msgTime {
+  float: right; }
+
+.msgText {
+  clear: both; }
+
+/*
+.msgBoxHeader
+{
+    display: none;
+    font-size: 24px;
+    text-align: center;
+    padding: 10px;
+    color: white;
+    background-color: grey;
+    border-bottom: 5px solid black;
+}
+
+.msgBox img
+{
+    vertical-align: top;
+    float: right;
+    width: 25px;
+    cursor: pointer;
+}
+.msgBox footer
+{
+    text-align: right;
+    vertical-align: bottom;
+}
+.msgContent
+{
+    padding: 10px;
+    text-align: left;
+    word-wrap: break-word;
+}
+.inputBox
+{
+    vertical-align: top;
+}
+*/
 .memoryContainer {
   display: inline-block;
   background-color: grey;
@@ -460,10 +486,12 @@ input[submit] {
   width: 100%; }
 
 .window {
-  display: inline-block;
+  display: block;
   border: 2px solid black;
   position: fixed;
-  background-color: #fff; }
+  background-color: #fff;
+  width: 300px;
+  height: 300px; }
 
 .windowIcon {
   float: left; }
@@ -489,7 +517,8 @@ input[submit] {
   background-color: white; }
 
 .statusBar {
-  height: 20px;
+  clear: both;
+  height: 25px;
   background-color: #ddd; }
 
 .statusBar img {
@@ -499,6 +528,10 @@ input[submit] {
 .statusBar .windowResizer {
   float: right;
   cursor: se-resize; }
+
+.statusBar p {
+  margin: 0;
+  padding: 5px; }
 
 .toolBar > ul {
   background-color: #ddd;
@@ -529,12 +562,16 @@ input[submit] {
 .hide {
   left: 9999px; }
 
+.ImageViewer {
+  width: 100%;
+  height: inherit; }
+
 .ImageViewerList {
-  width: 350px;
   list-style: none;
   padding: 0;
-  height: 300px;
-  overflow-y: scroll; }
+  overflow-y: scroll;
+  margin: 0;
+  height: inherit; }
 
 .ImageViewerList li {
   display: inline-block;
@@ -544,8 +581,8 @@ input[submit] {
   border-radius: 10px; }
 
 .RSSReader {
-  width: 300px;
-  height: 250px;
+  width: inherit;
+  height: inherit;
   overflow-y: scroll;
   overflow-x: hidden;
   font-size: 80%; }
@@ -580,3 +617,11 @@ input[submit] {
 
 .modal p {
   display: inline-block; }
+
+.Om {
+  height: inherit;
+  width: inherit; }
+
+.MineSweeper {
+  height: inherit;
+  width: inherit; }

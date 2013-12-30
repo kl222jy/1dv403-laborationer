@@ -1,15 +1,67 @@
+.MessageBoard
+{
+    height: inherit;
+    width: inherit;
+}
 .msgBoard
 {
-    width: 500px;
-    
+    height: 100%;
     margin: 10px;
     background-color: white;
 }
-
 input[submit]
 {
     color: black;
 }
+.inputBox textarea
+{
+    display: block;
+    width: 100%;
+    height: 50px;
+    margin: 0;
+    resize: none;
+}
+.inputBox input
+{
+    width: 100%;
+    height: 50px;
+    display: block;
+    margin: 0;
+}
+.msgCounter
+{
+    float: right;
+}
+.msgBoxHeader
+{
+    display: none;
+}
+.msgBox
+{
+    height: calc(100% - 110px);
+    overflow-y: auto;
+}
+.msgItem:nth-child(2n)
+{
+    background-color: #f0f5ff;
+}
+.msgItem
+{
+    text-align: left;
+}
+.msgAuthor
+{
+    float: left;
+}
+.msgTime
+{
+    float: right;
+}
+.msgText
+{
+    clear: both;
+}
+/*
 .msgBoxHeader
 {
     display: none;
@@ -20,11 +72,7 @@ input[submit]
     background-color: grey;
     border-bottom: 5px solid black;
 }
-.msgBox
-{
-    height: 400px;
-    overflow-y: auto;
-}
+
 .msgBox img
 {
     vertical-align: top;
@@ -43,31 +91,8 @@ input[submit]
     text-align: left;
     word-wrap: break-word;
 }
-.msgItem:nth-child(2n)
-{
-    background-color: #f0f5ff;
-}
 .inputBox
 {
     vertical-align: top;
 }
-.inputBox textarea
-{
-    display: block;
-    width: 400px;
-    height: 50px;
-    margin: 0;
-    resize: none;
-    float: left;
-}
-.inputBox input
-{
-    width: 90px;
-    height: 50px;
-    display: block;
-    margin: 0;
-}
-.msgCounter
-{
-    float: right;
-}
+*/

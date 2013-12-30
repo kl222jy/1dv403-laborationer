@@ -1,10 +1,15 @@
+.ImageViewer
+{
+    width: 100%;
+    height: inherit;
+}
 .ImageViewerList
 {
-    width: 350px;
     list-style: none;
     padding: 0;
-    height: 300px;
-    overflow-y:scroll;
+    overflow-y: scroll;
+    margin: 0;
+    height: inherit;
 }
 
 .ImageViewerList li

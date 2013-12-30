@@ -8,14 +8,14 @@
         
         this.windowIcon.setAttribute("src", "img/memory.png");
         
-        KLOS.init = function () {
-            boardSizeX = 4;
-            boardSizeY = 4;
-            firstCell = null;
-            secondCell = null;
-            tries = 0;
-            foundPairs = 0;
-        };
+//        KLOS.init = function () {
+        boardSizeX = 4;
+        boardSizeY = 4;
+        firstCell = null;
+        secondCell = null;
+        tries = 0;
+        foundPairs = 0;
+//        };
             
         cellArray = KLOS.Memory.RandomGenerator.getPictureArray(boardSizeY, boardSizeX);
         
