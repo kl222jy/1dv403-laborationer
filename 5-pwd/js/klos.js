@@ -19,42 +19,59 @@
     MemoryGameID = 0;
     MessageBoardCounter = 1;
     MessageBoardID = 1;
+    KLOS.menuItems = document.querySelectorAll("nav a");
     
-    menu = (function () {
-        var menuItems = document.querySelectorAll("nav a");
+    menu = (function (menuItems) {
+
         
-        menuItems[0].onclick = function () {
-            document.querySelector("main").innerHTML = "";
-            return false;
+        menuItems[0].onclick = function (e) {
+            e = e || event;
+            e.preventDefault();
+            var allwin = document.querySelectorAll("article.window"),
+                max = allwin.length,
+                i = 0;
+            
+            for (i = 0; i < max; i += 1) {
+                allwin[i].classList.add("minimized");
+            }
+            
+//            document.querySelector("main").innerHTML = "";
+//            return false;
         };
-        menuItems[1].onclick = function () {
-            var messageBoardInstance = new KLOS.MessageBoard("messageBoard" + MessageBoardID);
+        menuItems[1].onclick = function (e) {
+            e = e || event;
+            e.preventDefault();
+            var messageBoardInstance = new KLOS.MessageBoard("messageBoard" + MessageBoardID, e.target);
             MessageBoardID += 1;
-            return false;
         };
-        menuItems[2].onclick = function () {
-            var memoryGameInstance = new KLOS.Memory("Memory" + MemoryGameID);
+        menuItems[2].onclick = function (e) {
+            e = e || event;
+            e.preventDefault();
+            var memoryGameInstance = new KLOS.Memory("Memory" + MemoryGameID, e.target);
             MemoryGameID += 1;
-            return false;
         };
-        menuItems[3].onclick = function () {
-            var mineSweeperInstance = new KLOS.MineSweeper();
-            return false;
+        menuItems[3].onclick = function (e) {
+            e = e || event;
+            e.preventDefault();
+            var mineSweeperInstance = new KLOS.MineSweeper(e.target);
         };
-        menuItems[4].onclick = function () {
-            var imageViewerInstance = new KLOS.ImageViewer();
-            return false;
+        menuItems[4].onclick = function (e) {
+            e = e || event;
+            e.preventDefault();
+            var imageViewerInstance = new KLOS.ImageViewer(e.target);
         };
-        menuItems[5].onclick = function () {
-            var rssReaderInstace = new KLOS.RssReader();
-            return false;
+        menuItems[5].onclick = function (e) {
+            e = e || event;
+            e.preventDefault();
+            var rssReaderInstace = new KLOS.RssReader(e.target);
         };
-        menuItems[6].onclick = function () {
-            var aboutBoxInstance = new AboutBox("Om");
-            return false;
+        menuItems[6].onclick = function (e) {
+            e = e || event;
+            e.preventDefault();
+            var aboutBoxInstance = new AboutBox("Om", e.target);
         };
         
-    }());
+    }(KLOS.menuItems));
     
     function object(o) {
         function F() {}
@@ -62,7 +79,7 @@
         return new F();
     }
     
-    KLOS.WM = function (name) {
+    KLOS.WM = function (name, menuButton) {
         var test, render, windowBody, windowToolBar, windowStatusBar, that, offsetY, offsetX, move, currentWidth, currentHeight, startOffsetX, startOffsetY, resize;
 
         this.windowIcon = null;
@@ -71,11 +88,11 @@
         this.windowBody = null;
         this.windowStatusBar = null;
         this.fullWindow = null;
-        
+        this.menuButtonLi = menuButton.parentElement.parentElement;
         
         that = this;
         render = (function () {
-            var width, height, updateWindow, windowWidth, windowHeight, windowLeft, windowTop,
+            var width, height, updateWindow, windowWidth, windowHeight, windowLeft, windowTop, startmenu,
                 klosWindow = document.createElement("article"),
                 titleBar = document.createElement("header"),
                 body = document.createElement("section"),
@@ -94,11 +111,41 @@
                 statusBar = document.createElement("section"),
                 title = document.createElement("h1"),
                 icon = document.createElement("img"),
-                resizer = document.createElement("img");
+                resizer = document.createElement("img"),
+                newUl = document.createElement("ul"),
+                ul = that.menuButtonLi.querySelector("ul"),
+                li = document.createElement("li");
      
             klosWindow.setAttribute("class", "window");
             body.setAttribute("class", name.replace(" ", ""));
 
+            //Start - startmeny-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            
+            startmenu = (function () {
+                li.onmouseover = function () {
+                    klosWindow.classList.add("shadow");
+                };
+                
+                li.onmouseout = function () {
+                    klosWindow.classList.remove("shadow");
+                };
+                
+                li.onclick = function () {
+                    klosWindow.classList.remove("minimized");
+                };
+                
+                li.textContent = name;
+                newUl.setAttribute("class", "startMenuProgramInstances");
+                
+                if (that.menuButtonLi.contains(ul)) {
+                    ul.appendChild(li);
+                } else {
+                    newUl.appendChild(li);
+                    that.menuButtonLi.appendChild(newUl);
+                }
+            }());
+            
+            //Slut - startmeny-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
             //Start - Titlebar------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -147,6 +194,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 KLOS.desktop.removeChild(klosWindow);
+                that.menuButtonLi.querySelector("ul").removeChild(li);
             };
             
             toolBarMenuFile.onclick = function () {
@@ -165,7 +213,7 @@
             //Start - Statusbar-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
             statusBar.setAttribute("class", "statusBar");
-            resizer.setAttribute("src", "img/resizer.png");
+            resizer.setAttribute("src", "img/resizer2.png");
             resizer.setAttribute("class", "windowResizer");
             resizer.setAttribute("draggable", "false");
             
@@ -195,8 +243,8 @@
                 var css = getComputedStyle(klosWindow);
                 e = e || event;
                 e.preventDefault();
-                startOffsetX = parseInt(css.getPropertyValue("width"), 10) - e.clientX;
-                startOffsetY = parseInt(css.getPropertyValue("height"), 10) - e.clientY;
+                startOffsetX = parseInt(css.getPropertyValue("left"), 10);
+                startOffsetY = parseInt(css.getPropertyValue("top"), 10);
                 KLOS.counter += 1;
                 window.addEventListener("mousemove", resize, false);
             };
@@ -274,6 +322,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 KLOS.desktop.removeChild(klosWindow);
+                that.menuButtonLi.querySelector("ul").removeChild(li);
             };
             
             maxA.onclick = function (e) {
@@ -289,7 +338,7 @@
             };
             
             minA.onclick = function (e) {
-                alert("ej implementerat!");
+                klosWindow.classList.add("minimized");
             };
             
             //End-CloseWindow
@@ -317,6 +366,29 @@
             KLOS.desktop.appendChild(klosWindow);
             
             //Start-placering
+            
+            if (name === "MessageBoard") {
+                windowHeight = 400;
+                windowWidth = 400;
+                updateWindow();
+            }
+            if (name === "ImageViewer") {
+                windowHeight = 300;
+                windowWidth = 350;
+                updateWindow();
+            }
+            if (name === "RSS Reader") {
+                windowHeight = 400;
+                windowWidth = 450;
+                updateWindow();
+            }
+            if (name === "Om") {
+                windowHeight = 200;
+                windowWidth = 300;
+                updateWindow();
+            }
+            
+            
             
             klosWindow.addEventListener("instanceReady", function () {
                 css = getComputedStyle(klosWindow);
@@ -363,8 +435,8 @@
         subType.prototype = prototype;
     };
         
-    AboutBox = function (name) {
-        KLOS.WM.call(this, name);
+    AboutBox = function (name, menuButton) {
+        KLOS.WM.call(this, name, menuButton);
         
         this.windowIcon.setAttribute("src", "img/about.png");
         

@@ -4,8 +4,8 @@
     
     var makeThumb;
     
-    KLOS.ImageViewer = function () {
-        KLOS.WM.call(this, "ImageViewer");
+    KLOS.ImageViewer = function (menuButton) {
+        KLOS.WM.call(this, "ImageViewer", menuButton);
         var xhr, images, imageListTag, max, i, imageLoadTimer, activityImage, that, instanceReady;
         
         this.windowIcon.setAttribute("src", "img/imageviewer.png");
@@ -45,7 +45,7 @@
                 a.setAttribute("href", "#");
         
                 a.onclick = function () {
-                    var imageViewInstance = KLOS.ImageView(element);
+                    var imageViewInstance = KLOS.ImageView(element, menuButton);
         //            console.log(image);
                 };
                 
@@ -70,8 +70,8 @@
         this.fullWindow.dispatchEvent(instanceReady);
     };
     
-    KLOS.ImageView = function (image) {
-        KLOS.WM.call(this, "ImageView");
+    KLOS.ImageView = function (image, menuButton) {
+        KLOS.WM.call(this, "ImageView", menuButton);
         var instanceReady,
             img = document.createElement("img"),
             toolBarEditMenu = document.createElement("ul"),

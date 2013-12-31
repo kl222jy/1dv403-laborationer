@@ -1,0 +1,43 @@
+nav
+{
+    display: block;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    background-color: #222222;
+    border-top: 5px solid #000000;
+    margin: 0;
+    margin-top: 300px;
+    z-index: 10000000;
+}
+nav li
+{
+    position: relative;
+    list-style: none;
+    float:left;
+    margin-right: 30px;
+}
+nav img
+{
+    vertical-align: middle;
+    width: 75px;
+    cursor: pointer;
+}
+.startMenuProgramInstances li
+{
+    display: none;
+    background-color: black;
+    color: white;
+}
+nav>ul>li:hover .startMenuProgramInstances
+{
+    position: absolute;
+    bottom: 100%;
+}
+nav ul li:hover li
+{
+    display: block;
+    padding: 20px;
+    float: left;
+    margin-bottom: -5px;
+}

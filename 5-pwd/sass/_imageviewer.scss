@@ -1,7 +1,7 @@
 .ImageViewer
 {
     width: 100%;
-    height: inherit;
+    height: calc(100% - 75px);
 }
 .ImageViewerList
 {
@@ -9,7 +9,7 @@
     padding: 0;
     overflow-y: scroll;
     margin: 0;
-    height: inherit;
+    height: 100%;
 }
 
 .ImageViewerList li

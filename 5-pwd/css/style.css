@@ -362,33 +362,11 @@ body {
 .branding h1 {
   vertical-align: middle; }
 
-nav {
-  display: block;
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-  background-color: #222222;
-  border-top: 5px solid #000000;
-  margin: 0;
-  z-index: 10000000; }
-
-nav li {
-  list-style: none;
-  float: left;
-  margin-right: 30px; }
-
-nav img {
-  vertical-align: middle;
-  width: 75px;
-  cursor: pointer; }
-
 .MessageBoard {
-  height: inherit;
-  width: inherit; }
+  height: calc(100% - 85px); }
 
 .msgBoard {
   height: 100%;
-  margin: 10px;
   background-color: white; }
 
 input[submit] {
@@ -396,7 +374,7 @@ input[submit] {
 
 .inputBox textarea {
   display: block;
-  width: 100%;
+  width: 98%;
   height: 50px;
   margin: 0;
   resize: none; }
@@ -414,7 +392,8 @@ input[submit] {
   display: none; }
 
 .msgBox {
-  height: calc(100% - 110px);
+  height: calc(100% - 120px);
+  margin: 10px;
   overflow-y: auto; }
 
 .msgItem:nth-child(2n) {
@@ -430,7 +409,8 @@ input[submit] {
   float: right; }
 
 .msgText {
-  clear: both; }
+  clear: both;
+  word-wrap: break-word; }
 
 /*
 .msgBoxHeader
@@ -489,9 +469,7 @@ input[submit] {
   display: block;
   border: 2px solid black;
   position: fixed;
-  background-color: #fff;
-  width: 300px;
-  height: 300px; }
+  background-color: #fff; }
 
 .windowIcon {
   float: left; }
@@ -533,45 +511,61 @@ input[submit] {
   margin: 0;
   padding: 5px; }
 
+.minimized {
+  display: none; }
+
+.shadow {
+  display: block;
+  opacity: 0.5;
+  z-index: 1000; }
+
+/*----TOOLBAR--------------------------------------------------*/
 .toolBar > ul {
   background-color: #ddd;
   text-align: left;
-  height: 20px; }
-
-.toolBar > ul > li {
-  display: inline-block;
-  padding: 0 10px 0 10px; }
-
-.toolBar li {
-  cursor: pointer; }
+  height: 20px;
+  padding: 5px;
+  padding-bottom: 0;
+  vertical-align: bottom; }
 
 .toolBar ul {
-  list-style: none;
-  padding: 5px;
+  list-style-type: none;
   margin: 0; }
 
+.toolBar li {
+  cursor: pointer;
+  margin: 0; }
+
+.toolBar > ul > li {
+  margin-right: 10px;
+  float: left; }
+
 .toolBar ul li ul {
+  display: none; }
+
+.toolBar ul li:hover ul {
+  display: block;
+  margin: 0;
+  padding: 0;
+  position: absolute; }
+
+.toolBar ul li ul li {
   background-color: #ddd;
-  display: none;
-  position: relative;
-  padding: 0 10px 0 10px; }
-
-.show {
-  display: block !important; }
-
-.hide {
-  left: 9999px; }
+  padding: 5px;
+  z-index: 5;
+  border: 1px solid black;
+  border-top: none; }
 
 .ImageViewer {
   width: 100%;
-  height: inherit; }
+  height: calc(100% - 75px); }
 
 .ImageViewerList {
   list-style: none;
   padding: 0;
   overflow-y: scroll;
   margin: 0;
-  height: inherit; }
+  height: 100%; }
 
 .ImageViewerList li {
   display: inline-block;
@@ -582,7 +576,7 @@ input[submit] {
 
 .RSSReader {
   width: inherit;
-  height: inherit;
+  height: calc(100% - 79px);
   overflow-y: scroll;
   overflow-x: hidden;
   font-size: 80%; }
@@ -619,9 +613,48 @@ input[submit] {
   display: inline-block; }
 
 .Om {
-  height: inherit;
-  width: inherit; }
+  height: calc(100% - 91px);
+  width: inherit;
+  margin: 0; }
 
 .MineSweeper {
-  height: inherit;
-  width: inherit; }
+  height: calc(100% - 91px);
+  width: inherit;
+  margin: 0; }
+
+nav {
+  display: block;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  background-color: #222222;
+  border-top: 5px solid #000000;
+  margin: 0;
+  margin-top: 300px;
+  z-index: 10000000; }
+
+nav li {
+  position: relative;
+  list-style: none;
+  float: left;
+  margin-right: 30px; }
+
+nav img {
+  vertical-align: middle;
+  width: 75px;
+  cursor: pointer; }
+
+.startMenuProgramInstances li {
+  display: none;
+  background-color: black;
+  color: white; }
+
+nav > ul > li:hover .startMenuProgramInstances {
+  position: absolute;
+  bottom: 100%; }
+
+nav ul li:hover li {
+  display: block;
+  padding: 20px;
+  float: left;
+  margin-bottom: -5px; }

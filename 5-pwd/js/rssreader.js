@@ -2,8 +2,8 @@
 (function (KLOS) {
     "use strict";
     
-    KLOS.RssReader = function () {
-        KLOS.WM.call(this, "RSS Reader");
+    KLOS.RssReader = function (menuButton) {
+        KLOS.WM.call(this, "RSS Reader", menuButton);
         this.windowIcon.setAttribute("src", "img/rss.png");
         
         var xhr, rss, that, imageLoadTimer, activityImage, url, changeFeed, getFeed, baseUrl, instanceReady, setFeedUpdate, setUpdate, feedUpdate,

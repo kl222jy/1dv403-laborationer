@@ -2,8 +2,8 @@
 (function (KLOS) {
     "use strict";
     
-    KLOS.Memory = function (boardId) {
-        KLOS.WM.call(this, "Memory");
+    KLOS.Memory = function (boardId, menuButton) {
+        KLOS.WM.call(this, "Memory", menuButton);
         var cellArray, Cell, cells, boardSizeY, boardSizeX, renderGameBoard, renderGame, checkPair, renderCell, firstCell, secondCell, updateGameBoard, tries, foundPairs, hideCells, nullCells, instanceReady;
         
         this.windowIcon.setAttribute("src", "img/memory.png");

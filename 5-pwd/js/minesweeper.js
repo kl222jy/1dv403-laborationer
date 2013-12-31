@@ -2,8 +2,8 @@
 (function (KLOS) {
     "use strict";
     
-    KLOS.MineSweeper = function () {
-        KLOS.WM.call(this, "Mine Sweeper");
+    KLOS.MineSweeper = function (menuButton) {
+        KLOS.WM.call(this, "Mine Sweeper", menuButton);
         this.windowIcon.setAttribute("src", "img/minesweeper.png");
 
         var instanceReady,

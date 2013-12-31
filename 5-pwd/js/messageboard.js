@@ -2,8 +2,8 @@
 
 (function (KLOS) {
     "use strict";
-    KLOS.MessageBoard = function (name) {
-        KLOS.WM.call(this, "MessageBoard");
+    KLOS.MessageBoard = function (name, menuButton) {
+        KLOS.WM.call(this, "MessageBoard", menuButton);
         var elem, updateTime, renderMsgBox, that, renderMessage, renderMessages, getMessages, imageLoadTimer, activityImage, xhr, history, msgSection, highestId, textarea, sendMessage, updateBoard, addToolbarChoice, chooseUpdateInterval, chooseMessagesAmount, chooseAuthorName, username, saveSettings, loadSettings,
             toolBarSettingsMenu = document.createElement("ul"),
             toolBarSettings = document.createElement("li"),

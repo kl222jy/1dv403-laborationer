@@ -4,8 +4,6 @@
     border: 2px solid black;
     position: fixed;
     background-color: #fff;
-    width: 300px;
-    height: 300px;
 }
 
 .windowIcon
@@ -65,46 +63,94 @@
     margin: 0;
     padding: 5px;
 }
-
+.minimized
+{
+    display: none;
+}
+.shadow
+{
+    display: block;
+    opacity: 0.5;
+    z-index: 1000;
+}
+/*----TOOLBAR--------------------------------------------------*/
 .toolBar>ul
 {
     background-color: #ddd;
     text-align: left;
     height: 20px;
+    padding: 5px;
+    padding-bottom: 0;
+    vertical-align: bottom;
 }
-
-.toolBar>ul>li
+.toolBar ul
 {
-    display: inline-block;
-    padding: 0 10px 0 10px;
+    list-style-type: none;
+    margin: 0;
 }
-
 .toolBar li
 {
     cursor: pointer;
-}
-
-.toolBar ul
-{
-    list-style: none;
-    padding: 5px;
     margin: 0;
 }
-
-
+.toolBar>ul>li
+{
+    margin-right: 10px;
+    float: left;
+}
 .toolBar ul li ul
 {
-    background-color: #ddd;
     display: none;
-    position: relative;
-    padding: 0 10px 0 10px
+}
+.toolBar ul li:hover ul
+{
+    display: block;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+}
+.toolBar ul li ul li
+{
+    background-color: #ddd;
+    padding: 5px;
+    z-index: 5;
+    border: 1px solid black;
+    border-top: none;
 }
 
-.show
-{
-    display: block !important;
-}
-.hide
-{
-    left: 9999px;
-}
+
+//
+//.toolBar>ul>li
+//{
+//    display: inline-block;
+//    padding: 0 10px 0 10px;
+//}
+//
+//.toolBar li
+//{
+//    cursor: pointer;
+//}
+//
+//.toolBar ul
+//{
+//    list-style: none;
+//    padding: 5px;
+//    margin: 0;
+//}
+//
+//
+//.toolBar ul li ul
+//{
+//    background-color: #ddd;
+//    display: none;
+//    position: relative;
+//    padding: 0 10px 0 10px
+//}
+//.show
+//{
+//    display: block !important;
+//}
+//.hide
+//{
+//    left: 9999px;
+//}

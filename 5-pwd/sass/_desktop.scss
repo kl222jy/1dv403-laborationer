@@ -26,26 +26,3 @@ body {
 {
     vertical-align: middle;
 }
-nav
-{
-    display: block;
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    background-color: #222222;
-    border-top: 5px solid #000000;
-    margin: 0;
-    z-index: 10000000;
-}
-nav li
-{
-    list-style: none;
-    float:left;
-    margin-right: 30px;
-}
-nav img
-{
-    vertical-align: middle;
-    width: 75px;
-    cursor: pointer;
-}

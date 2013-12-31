@@ -1,12 +1,10 @@
 .MessageBoard
 {
-    height: inherit;
-    width: inherit;
+    height: calc(100% - 85px);
 }
 .msgBoard
 {
     height: 100%;
-    margin: 10px;
     background-color: white;
 }
 input[submit]
@@ -16,7 +14,7 @@ input[submit]
 .inputBox textarea
 {
     display: block;
-    width: 100%;
+    width: 98%;
     height: 50px;
     margin: 0;
     resize: none;
@@ -38,7 +36,8 @@ input[submit]
 }
 .msgBox
 {
-    height: calc(100% - 110px);
+    height: calc(100% - 120px);
+    margin: 10px;
     overflow-y: auto;
 }
 .msgItem:nth-child(2n)
@@ -60,6 +59,7 @@ input[submit]
 .msgText
 {
     clear: both;
+    word-wrap: break-word;
 }
 /*
 .msgBoxHeader

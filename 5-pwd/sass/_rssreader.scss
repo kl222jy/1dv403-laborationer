@@ -1,7 +1,7 @@
 .RSSReader
 {
     width: inherit;
-    height: inherit;
+    height: calc(100% - 79px);
     overflow-y: scroll;
     overflow-x: hidden;
     font-size: 80%;
