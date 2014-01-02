@@ -27,5 +27,10 @@
 }
 .modal p
 {
-    display: inline-block;
+    display: inline;
+}
+.modal p:after
+{
+    white-space: pre;
+    content: "\A";
 }

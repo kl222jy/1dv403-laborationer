@@ -1,8 +1,8 @@
 .memoryContainer
 {
-
+    width: 275px;
     display: inline-block;
-    background-color: grey;
+    background-color: white;
     z-index: 2;
 }
 
@@ -22,6 +22,26 @@
 
 .resultsBoard
 {
+    width: 275px;
     background-color: white;
-    width: 100%;
+    word-wrap: break-word;
+}
+.highscoreResults
+{
+    width: 150px;
+    margin-top: 19px;
+    float: right;
+    text-align: right;
+    font-weight: 700;
+}
+.highscoreResults p
+{
+    font-weight: 400;
+    width: 150px;
+    margin: 0;
+}
+.highscoreResults:after
+{
+    content: "";
+    clear: both;
 }

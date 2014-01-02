@@ -4,7 +4,7 @@
 //Trevlig lösning, slipper window onload, bra hantering inför användning av fler moduler och möjlighet att skjuta in hänvisningar till andra moduler som argument i kortare form.
 (function (KLOS) {
     "use strict";
-    var menu, counter, MemoryGameID, WindowManager, AboutBox, inheritPrototype, Memory, MessageBoard, MessageBoardID, MessageBoardCounter, css, cssNav, windowPositionTimout, CustomEvent, blackout;
+    var menu, counter, MemoryGameID, WindowManager, AboutBox, inheritPrototype, Memory, MessageBoard, MessageBoardID, MessageBoardCounter, css, cssNav, windowPositionTimout, CustomEvent, blackout, modal, disableSelection;
 
     KLOS.desktop = document.querySelector("main");
     css = getComputedStyle(KLOS.desktop);
@@ -92,7 +92,7 @@
         
         that = this;
         render = (function () {
-            var width, height, updateWindow, windowWidth, windowHeight, windowLeft, windowTop, startmenu,
+            var width, height, updateWindow, windowWidth, windowHeight, windowLeft, windowTop, startmenu, minWidth, minHeight,
                 klosWindow = document.createElement("article"),
                 titleBar = document.createElement("header"),
                 body = document.createElement("section"),
@@ -217,7 +217,9 @@
             resizer.setAttribute("class", "windowResizer");
             resizer.setAttribute("draggable", "false");
             
-            statusBar.appendChild(resizer);
+            if (name !== "Memory" && name !== "ImageView") {
+                statusBar.appendChild(resizer);
+            }
             
             //Start Window funktioner-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
@@ -230,12 +232,22 @@
             resize = function (e) {
                 e = e || event;
                 
+                disableSelection(e.target);
+                
                 width = e.clientX - startOffsetX;
                 height = e.clientY - startOffsetY;
                 
-//                klosWindow.setAttribute("style", "width: " + width + "px; height: " + height + "px; z-index: " + counter);
-                windowWidth = width;
-                windowHeight = height;
+                if (height <= minHeight) {
+                    windowHeight = minHeight;
+                } else {
+                    windowHeight = height;
+                }
+                if (width <= minWidth) {
+                    windowWidth = minWidth;
+                } else {
+                    windowWidth = width;
+                }
+
                 updateWindow();
             };
             
@@ -243,8 +255,8 @@
                 var css = getComputedStyle(klosWindow);
                 e = e || event;
                 e.preventDefault();
-                startOffsetX = parseInt(css.getPropertyValue("left"), 10);
-                startOffsetY = parseInt(css.getPropertyValue("top"), 10);
+                startOffsetX = parseInt(css.getPropertyValue("left"), 10) - 5;
+                startOffsetY = parseInt(css.getPropertyValue("top"), 10) - 5;
                 KLOS.counter += 1;
                 window.addEventListener("mousemove", resize, false);
             };
@@ -338,6 +350,8 @@
             };
             
             minA.onclick = function (e) {
+                e = e || event;
+                e.preventDefault();
                 klosWindow.classList.add("minimized");
             };
             
@@ -413,6 +427,9 @@
                 
                 windowLeft = KLOS.left;
                 windowTop = KLOS.top;
+                
+                minWidth = width;
+                minHeight = height;
                 
                 updateWindow();
                 
@@ -536,8 +553,7 @@
     };
    
     KLOS.showModal = function (innerModal) {
-        var modal = document.createElement("section");
-        
+        modal = document.createElement("section");
         blackout = document.createElement("section");
         
         blackout.setAttribute("class", "blackout");
@@ -559,12 +575,22 @@
         
         
         modal.appendChild(innerModal);
-        blackout.appendChild(modal);
         document.body.appendChild(blackout);
+        document.body.appendChild(modal);
     };
     
     KLOS.removeModal = function () {
         document.body.removeChild(blackout);
+        document.body.removeChild(modal);
     };
+    
+    disableSelection = function (element) {
+        element.onselectstart = function () {return false; };
+        element.unselectable = "on";
+        element.style.MozUserSelect = "none";
+        element.style.cursor = "default";
+    };
+    
+    disableSelection(document.body);
     
 }(window.KLOS = window.KLOS || {}));
