@@ -68,6 +68,11 @@
         menuItems[6].onclick = function (e) {
             e = e || event;
             e.preventDefault();
+            var aboutBoxInstance = new KLOS.Notepad(e.target);
+        };
+        menuItems[7].onclick = function (e) {
+            e = e || event;
+            e.preventDefault();
             var aboutBoxInstance = new AboutBox("Om", e.target);
         };
         
@@ -176,7 +181,9 @@
             closeA.appendChild(closeImg);
 
             titleBar.appendChild(closeA);
-            titleBar.appendChild(maxA);
+            if (name !== "Memory" && name !== "ImageView") {
+                titleBar.appendChild(maxA);
+            }
             titleBar.appendChild(minA);
             
             titleBar.appendChild(icon);
@@ -247,6 +254,14 @@
                 } else {
                     windowWidth = width;
                 }
+                
+                if (width >= KLOS.desktopWidth - startOffsetX - 5) {
+                    windowWidth = KLOS.desktopWidth - startOffsetX - 5;
+                }
+                if (height >= KLOS.desktopHeight - startOffsetY - 8) {
+                    windowHeight = KLOS.desktopHeight - startOffsetY - 8;
+                }
+                
 
                 updateWindow();
             };
@@ -261,7 +276,13 @@
                 window.addEventListener("mousemove", resize, false);
             };
             
-            document.onmouseup = function (e) {
+//            KLOS.desktop.onmousedown = function (e) {
+//                e = e || event;
+//                e.preventDefault();
+//                e.stopPropagation();
+//            };
+            
+            resizer.onmouseup = function (e) {
                 e = e || event;
                 e.preventDefault();
                 window.removeEventListener("mousemove", resize, false);
@@ -314,6 +335,7 @@
                 offsetX = parseInt(css.getPropertyValue("left"), 10) - e.clientX;
                 offsetY = parseInt(css.getPropertyValue("top"), 10) - e.clientY;
                 KLOS.counter += 1;
+                updateWindow();
                 window.addEventListener("mousemove", move, false);
             };
             
@@ -322,6 +344,11 @@
                 e.preventDefault();
                 window.removeEventListener("mousemove", move, false);
 //                window.removeEventListener("mousemove", resize, false);
+            };
+            
+            klosWindow.onmousedown = function () {
+                KLOS.counter += 1;
+                updateWindow();
             };
             
             
@@ -341,11 +368,19 @@
                 e = e || event;
                 e.preventDefault();
                 e.stopPropagation();
-                windowLeft = 0;
-                windowTop = 0;
-                windowHeight = KLOS.desktopHeight;
-                windowWidth = KLOS.desktopWidth;
                 
+                if (windowHeight !== KLOS.desktopHeight && windowWidth !== KLOS.desktopWidth) {
+                    windowLeft = 0;
+                    windowTop = 0;
+                    windowHeight = KLOS.desktopHeight;
+                    windowWidth = KLOS.desktopWidth;
+                } else {
+                    windowLeft = 50;
+                    windowTop = 50;
+                    windowHeight = minHeight;
+                    windowWidth = minWidth;
+                }
+                    
                 updateWindow();
             };
             
@@ -359,6 +394,12 @@
             
             updateWindow = function () {
                 klosWindow.setAttribute("style", "width: " + windowWidth + "px; height: " + windowHeight + "px; z-index: " + KLOS.counter + "; left: " + windowLeft + "px; top: " + windowTop + "px;");
+            };
+            
+            //Förhindrar att eventlisteners fastnar i ett aktivt läge
+            window.onmouseup = function () {
+                window.removeEventListener("mousemove", move, false);
+                window.removeEventListener("mousemove", resize, false);
             };
             
             //END WINDOW FUNKTIONER-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -401,8 +442,16 @@
                 windowWidth = 300;
                 updateWindow();
             }
-            
-            
+            if (name === "Notepad") {
+                windowHeight = 300;
+                windowWidth = 400;
+                updateWindow();
+            }
+            if (name === "Mine Sweeper") {
+                windowHeight = 150;
+                windowWidth = 250;
+                updateWindow();
+            }
             
             klosWindow.addEventListener("instanceReady", function () {
                 css = getComputedStyle(klosWindow);
@@ -588,7 +637,7 @@
         element.onselectstart = function () {return false; };
         element.unselectable = "on";
         element.style.MozUserSelect = "none";
-        element.style.cursor = "default";
+//        element.style.cursor = "default";
     };
     
     disableSelection(document.body);
