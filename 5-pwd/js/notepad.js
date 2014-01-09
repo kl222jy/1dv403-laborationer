@@ -9,8 +9,9 @@
         var instanceReady,
             textPadForm = document.createElement("form"),
             textPad = document.createElement("textarea");
+        
         textPad.setAttribute("class", "textPad");
-        textPad.value = localStorage.textPad;
+        textPad.value = localStorage.textPad || "";
         
         textPad.onkeydown = function (e) {
             var cursorPostition;
@@ -21,6 +22,9 @@
                 textPad.value = textPad.value.substr(0, cursorPostition) + "\t" + textPad.value.substr(textPad.selectionEnd);
                 textPad.selectionEnd = cursorPostition + 1;
             }
+        };
+        
+        textPad.onkeyup = function () {
             localStorage.textPad = textPad.value;
         };
         

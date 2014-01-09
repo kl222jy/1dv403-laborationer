@@ -1,5 +1,6 @@
+/*jslint node:true*/
 /*global window, event, document, console, WM, setTimeout, localStorage */
-(function (KLOS) {
+(function (KLOS, io) {
     "use strict";
     
     KLOS.Memory = function (boardId, menuButton) {
@@ -9,9 +10,13 @@
             toolBarEditMenu = document.createElement("ul"),
             toolBarEdit = document.createElement("li"),
             toolBarEditMenuRestart = document.createElement("li"),
-            toolBarEditMenuSetBoard = document.createElement("li");
+            toolBarEditMenuSetBoard = document.createElement("li"),
+            socket = io.connect("http://localhost:12345"); // TIP: .connect with no args does auto-discovery
         
+        KLOS.username = KLOS.username || "Anonym";
         this.windowIcon.setAttribute("src", "img/memory.png");
+        
+        socket.emit("memoryload");
         
         that = this;
         boardSizeX = 4;
@@ -217,6 +222,7 @@
                 
                 //Vunnit?
                 if (foundPairs === ((boardSizeX * boardSizeY) / 2)) {
+
                     results = document.querySelector("#memory" + boardId + " section.resultsBoard");
                     stopTime = Date.now();
                     resultTime = (stopTime - startTime) / 1000;
@@ -224,12 +230,16 @@
                     if (resultTime < recordTime) {
                         localStorage.memoryBestTime = resultTime;
                         results.innerHTML += "Rekordtid! ";
+
+                        socket.emit('highscoretime', KLOS.username, resultTime);
                     }
+                
                     if (tries < recordTries) {
                         localStorage.memoryBestTries = tries;
                         results.innerHTML += "Rekord! minsta antal försök. ";
+                        socket.emit("highscoretries", KLOS.username, tries);
                     }
-                    
+                        
                     results.innerHTML += "Misslyckade: " + tries + ", tid: " + resultTime;
                 }
             };
@@ -303,17 +313,28 @@
             highscoreTries.textContent = "Misslyckade försök: " + bestTries;
             highscoreTime.textContent = "Tid: " + bestTime;
             
+            socket.on("memorytime", function (data) {
+                highscoreTime.textContent = "Tid: " + data;
+            });
+            socket.on("newrecordtime", function (data) {
+                highscoreTime.textContent = "Tid: " + data;
+            });
+            
+            socket.on("memoryscore", function (data) {
+                highscoreTries.textContent = "Misslyckade försök: " + data;
+            });
+            socket.on("newrecordscore", function (data) {
+                highscoreTries.textContent = "Misslyckade försök: " + data;
+            });
+            
             highscoreResults.appendChild(highscoreTime);
             highscoreResults.appendChild(highscoreTries);
-            
-            
             
             containerTag.appendChild(gameBoardTag);
             containerTag.appendChild(resultsBoardTag);
             containerTag.appendChild(highscoreResults);
             
             return containerTag;
-            
         };
         
     //    document.querySelector("main").appendChild(renderGame());
@@ -323,6 +344,6 @@
         instanceReady = new KLOS.CustomEvent("instanceReady");
         this.fullWindow.dispatchEvent(instanceReady);
     };
-}(window.KLOS = window.KLOS || {}));
+}(window.KLOS = window.KLOS || {}, window.io));
 
 //KLOS.inheritPrototype(KLOS.Memory, KLOS.WM);

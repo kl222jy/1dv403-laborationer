@@ -282,11 +282,16 @@
 //                e.stopPropagation();
 //            };
             
-            resizer.onmouseup = function (e) {
-                e = e || event;
-                e.preventDefault();
+            
+            window.addEventListener("mouseup", function () {
                 window.removeEventListener("mousemove", resize, false);
-            };
+            }, false);
+            
+//            resizer.onmouseup = function (e) {
+//                e = e || event;
+//                e.preventDefault();
+//                window.removeEventListener("mousemove", resize, false);
+//            };
             
             //End-ResizeWindow
             
@@ -339,12 +344,18 @@
                 window.addEventListener("mousemove", move, false);
             };
             
-            titleBar.onmouseup = function (e) {             //Problem om fönstret inte hängt med och mouseup sker på window, men lägger jag eventet på window så släpps inte fönstret efter att förflyttning av ett annat fönster gjorts innan samma fönster flyttas igen, då släpps inte fönstret.. eventet avfyras inte då? Lösningen kan vara att köra preventdefault på mousedown på window, men då får jag väl istället problem med att onclick aldrig fungerar.
-                e = e || event;
-                e.preventDefault();
+            
+            window.addEventListener("mouseup", function () {
                 window.removeEventListener("mousemove", move, false);
-//                window.removeEventListener("mousemove", resize, false);
-            };
+            }, false);
+            
+            
+//            titleBar.onmouseup = function (e) {             //Problem om fönstret inte hängt med och mouseup sker på window, men lägger jag eventet på window så släpps inte fönstret efter att förflyttning av ett annat fönster gjorts innan samma fönster flyttas igen, då släpps inte fönstret.. eventet avfyras inte då? Lösningen kan vara att köra preventdefault på mousedown på window, men då får jag väl istället problem med att onclick aldrig fungerar.
+//                e = e || event;
+//                e.preventDefault();
+//                window.removeEventListener("mousemove", move, false);
+////                window.removeEventListener("mousemove", resize, false);
+//            };
             
             klosWindow.onmousedown = function () {
                 KLOS.counter += 1;
@@ -397,10 +408,10 @@
             };
             
             //Förhindrar att eventlisteners fastnar i ett aktivt läge
-            window.onmouseup = function () {
-                window.removeEventListener("mousemove", move, false);
-                window.removeEventListener("mousemove", resize, false);
-            };
+//            window.onmouseup = function () {
+//                window.removeEventListener("mousemove", move, false);
+//                window.removeEventListener("mousemove", resize, false);
+//            };
             
             //END WINDOW FUNKTIONER-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
