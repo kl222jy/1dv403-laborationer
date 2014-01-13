@@ -11,10 +11,73 @@ var KLOS = window.KLOS,
     MessageBoardTestCase,
     NotepadTestCase,
     RssReaderTestCase,
+    KLOSTestCase,
+    XhrConTestCase,
     fakeImage = window.document.querySelector("nav img");
 
 window.document.querySelector("nav").setAttribute("style", "display: none");
 window.document.querySelector("main").setAttribute("style", "display: none");
+
+KLOSTestCase = buster.testCase("KLOS", {
+    "//desktop should be object": function () {
+        buster.assert.equals(typeof KLOS.desktop, "object");
+    },
+    "desktopWidth should be number": function () {
+        buster.assert(Number(KLOS.desktopWidth));
+    },
+    "desktopHeight should be number": function () {
+        buster.assert(Number(KLOS.desktopHeight));
+    },
+    "counter should be number": function () {
+        buster.assert(Number(KLOS.counter));
+    },
+    "top should be number": function () {
+        buster.assert(Number(KLOS.top));
+    },
+    "left should be number": function () {
+        buster.assert(Number(KLOS.left));
+    },
+    "right should be number": function () {
+        buster.assert(Number(KLOS.right));
+    },
+    "menuItems should be object": function () {
+        buster.assert.equals(typeof KLOS.menuItems, "object");
+    },
+    "//menuItems should contain links": function () {
+        buster.assert(KLOS.menuItems);
+    },
+    "WM should be able to run": function () {
+        var windowManager = new KLOS.WM("name", fakeImage);
+        buster.assert(windowManager);
+    },
+    "//CustomEvent should be event": function () {
+        buster.assert.equals(typeof KLOS.CustomEvent, "function");
+    },
+    "showModal should be able to run": function () {
+        KLOS.showModal(window.document.createElement("div"));
+        buster.assert(KLOS.showModal);
+    },
+    "removeModal should be able to run": function () {
+        KLOS.showModal(window.document.createElement("div"));
+        KLOS.removeModal();
+        buster.assert(KLOS.removeModal);
+    }
+});
+
+//http://docs.busterjs.org/en/latest/overview/#testing-ajax
+XhrConTestCase = buster.testCase("KLOS.XhrCon", {
+    setUp: function () {
+        this.server = window.sinon.fakeServer.create();
+    },
+    "XhrCon should deliver data on callback": function () {
+        var callback = this.spy();
+        KLOS.XhrCon(this.server, callback, false);
+        this.server.requests[0].respond(200, {"content-type": "application/json"}, JSON.stringify({id: 1, text: "test"}));
+
+        buster.assert(callback.calledOnce);
+        buster.assert.equals(JSON.parse(callback.getCall(0).args[0]), {id: 1, text: "test"});
+    }
+});
 
 MemoryTestCase = buster.testCase("KLOS.Memory", {
     setUp: function () {
@@ -29,9 +92,6 @@ MemoryTestCase = buster.testCase("KLOS.Memory", {
     },
     "//test private functions": function () {
         buster.assert(false);
-    },
-    tearDown: function () {
-//        this.memory = null;
     }
 });
 
@@ -54,9 +114,6 @@ MessageBoardTestCase = buster.testCase("KLOS.MessageBoard", {
     },
     "MessageBoard should be able to load": function () {
         buster.assert(this.MessageBoard);
-    },
-    tearDown: function () {
-//        this.MessageBoard = null;
     }
 });
 MineSweeperTestCase = buster.testCase("KLOS.MineSweeper", {
@@ -65,9 +122,6 @@ MineSweeperTestCase = buster.testCase("KLOS.MineSweeper", {
     },
     "MineSweeper should be able to load": function () {
         buster.assert(this.MineSweeper);
-    },
-    tearDown: function () {
-//        this.MineSweeper = null;
     }
 });
 NotepadTestCase = buster.testCase("KLOS.Notepad", {
@@ -76,9 +130,6 @@ NotepadTestCase = buster.testCase("KLOS.Notepad", {
     },
     "Notepad should be able to load": function () {
         buster.assert(this.Notepad);
-    },
-    tearDown: function () {
-//        this.Notepad = null;
     }
 });
 RssReaderTestCase = buster.testCase("KLOS.RssReader", {
@@ -87,9 +138,6 @@ RssReaderTestCase = buster.testCase("KLOS.RssReader", {
     },
     "RssReader should be able to load": function () {
         buster.assert(this.RssReader);
-    },
-    tearDown: function () {
-//        this.RssReader = null;
     }
 });
 

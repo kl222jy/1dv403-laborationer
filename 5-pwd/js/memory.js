@@ -1,6 +1,39 @@
 /*global window, event, document, console, WM, setTimeout, localStorage */
 (function (KLOS) {
     "use strict";
+
+    /* --------------------------------------------------------------------------------------------------
+    
+    Finns enbart kvar för att kunna ha en körbar version av projektet, mitt webbhotell stödjer inte node.
+    Se memorywithnode.js för kommentarer
+    
+    --------------------------------------------------------------------------------------------------- */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     KLOS.Memory = function (boardId, menuButton) {
         KLOS.WM.call(this, "Memory", menuButton);

@@ -23,7 +23,9 @@
         username = "Anonym";
         highestId = 0;
         
+        //Hämtar meddelanden
         getMessages = function (noUpdate) {
+            //Timout, efter 300ms läggs aktivitetsvisare in i statusfältet
             imageLoadTimer = setTimeout(function () {
                 activityImage = document.createElement("img");
                 activityImage.setAttribute("src", "img/activity.gif");
@@ -32,15 +34,17 @@
                 that.windowStatusBar.appendChild(activityImage);
             }, 300);
             
-            
+            //Hämtar meddelandelista
             xhr = KLOS.XhrCon("http://homepage.lnu.se/staff/tstjo/labbyserver/getMessage.php?history=" + history, function (data) {
                 var timestring, tempId,  article, msgInfo, msgText, author, time, getNode, messages, i, xpe, parser = new DOMParser(),
                     doc = parser.parseFromString(data, "application/xml");
 
+                //Tar bort timeout så att inte bilden läggs till i ett senare skede
                 clearTimeout(imageLoadTimer);
 
                 messages = doc.getElementsByTagName("message");
                 
+                //Funktion för att hämta ut nodvärde
                 getNode = function (node, search) {
                     if (node.getElementsByTagName(search)[0].childNodes[0]) {
                         return node.getElementsByTagName(search)[0].childNodes[0].nodeValue;
@@ -53,6 +57,7 @@
                     
                     tempId = getNode(messages[i], "id");
 
+                    //Om nuvarande id är högre än hämtad posts id, skippa detta block
                     if (tempId > highestId) {
                         
                         article = document.createElement("article");
@@ -82,19 +87,27 @@
                         highestId = getNode(messages[i], "id");
                     }
                 }
+                
+                //Sätter scrollbar till dess lägsta position
                 msgSection.scrollTop = msgSection.scrollHeight;
+                
+                //Om aktivitetsbilden finns, ta bort den
                 if (that.windowStatusBar.contains(activityImage)) {
                     that.windowStatusBar.removeChild(activityImage);
                 }
+                //Om fönstret finns kvar och fler uppdateringar ska göras, sätt en ny timeout för nästa inläsning
                 if (KLOS.desktop.contains(that.fullWindow) && noUpdate !== true) {
                     setTimeout(getMessages, updateTime);
                 }
             }, false);
         };
         
+        //Hämta meddelanden
         getMessages();
         
         that = this;
+        
+        //Skicka meddelanden
         sendMessage = function (message) {
             var xhr = new XMLHttpRequest();
             
@@ -104,6 +117,7 @@
             getMessages(true);
         };
 
+        //Förenkling av elementskapande
         elem = function (elemName, elemClass, elemId) {
             var elem = document.createElement(elemName);
             if (elemClass) {
@@ -115,6 +129,7 @@
             return elem;
         };
         
+        //Renderar chattfönstret
         renderMsgBox = function (name) {
             var boardFragment = document.createDocumentFragment(),
                 article = elem("article", "msgBoard", name),
@@ -141,12 +156,15 @@
             inputButton = elem("input");
             inputButton.type = "button";
             inputButton.value = "skriv";
+            
             inputButton.onclick = function (e) {
                 e = e || event;
                 sendMessage(textarea.value);
                 document.querySelector("#" + that.name + " textarea").value = "";
                 return false;
             };
+            
+            //Enter + shift = ny rad, Enter = skicka
             textarea.onkeypress = function (e) {
                 e = e || event;
                 if (e.keyCode === 13  && (!e.shiftKey)) {
@@ -164,13 +182,15 @@
             boardFragment.appendChild(inputSection).appendChild(form).appendChild(textarea).parentElement.appendChild(inputButton);
             
             that.windowBody.appendChild(boardFragment);
+            
+            //Sänd ut ett meddelande om att programinstansen laddats färdigt
             instanceReady = new KLOS.CustomEvent("instanceReady");
             that.fullWindow.dispatchEvent(instanceReady);
         };
 
         renderMsgBox(name);
         
-        
+        //Hanterar val av uppdateringsintervall
         chooseUpdateInterval = function () {
             var pTag = document.createElement("p"),
                 selectUpdate = document.createElement("select"),
@@ -222,6 +242,7 @@
             KLOS.showModal(innerModal);
         };
         
+        //Hanterar val av meddelandehistorik
         chooseMessagesAmount = function () {
             var pTag = document.createElement("p"),
                 selectMessages = document.createElement("select"),
@@ -268,6 +289,7 @@
             KLOS.showModal(innerModal);
         };
         
+        //Val av användarnamn
         chooseAuthorName = function () {
             var pTag = document.createElement("p"),
                 setNameTextbox = document.createElement("input"),
@@ -282,6 +304,7 @@
             
             setNameButton.onclick = function () {
                 username = setNameTextbox.value;
+                //Här borde läggas till lite logik som kontrollerar inmatningen
                 saveSettings();
                 KLOS.removeModal();
             };
@@ -300,11 +323,6 @@
         toolBarSettingsMessages.textContent = "Antal meddelanden..";
         toolBarSettingsAuthor.textContent = "Alias..";
         toolBarSettingsUpdate.textContent = "Uppdatera nu";
-        
-        toolBarSettings.onclick = function () {
-            toolBarSettingsMenu.classList.toggle("show");
-            return false;
-        };
         
         toolBarSettingsUpdateInterval.onclick = function () {
             chooseUpdateInterval();
@@ -331,6 +349,7 @@
         
         this.windowToolBar.appendChild(toolBarSettings);
         
+        //Ladda inställningar från localstorage
         loadSettings = function () {
             if (localStorage.username && localStorage.updateTime && localStorage.history) {
                 username = localStorage.username;
@@ -341,6 +360,7 @@
         
         loadSettings();
         
+        //Sparar inställningar i localstorage
         saveSettings = function () {
             localStorage.username = username;
             localStorage.updateTime = updateTime;

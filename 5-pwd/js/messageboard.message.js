@@ -1,6 +1,10 @@
 "use strict";
 var KLOS = KLOS || {};
 
+/*
+    Denna modul används inte längre.
+*/
+
 KLOS.MessageBoard.Message = function (text, date) {
     var f_date, f_text;
 

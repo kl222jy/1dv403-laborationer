@@ -11,16 +11,20 @@
             toolBarEdit = document.createElement("li"),
             toolBarEditMenuRestart = document.createElement("li"),
             toolBarEditMenuSetBoard = document.createElement("li"),
-            socket = io.connect("http://localhost:12345"); // TIP: .connect with no args does auto-discovery
+            socket = io.connect("http://localhost:12345");          //Kopplar klienten till servern
         
+        //Om inget användarnamn finns, sätt till "Anonym"
         KLOS.username = KLOS.username || "Anonym";
         this.windowIcon.setAttribute("src", "img/memory.png");
         
+        //Meddela att memory håller på att läsas in (triggar hämtning av highscore från db på servern)
         socket.emit("memoryload");
         
         that = this;
         boardSizeX = 4;
         boardSizeY = 4;
+        
+        //Initierar spelet
         init = function () {
 
             firstCell = null;
@@ -41,15 +45,9 @@
         toolBarEdit.textContent = "Inställningar";
         toolBarEditMenuRestart.textContent = "Starta om";
         toolBarEditMenuSetBoard.textContent = "Välj bräde..";
-
-        toolBarEdit.onclick = function () {
-            toolBarEditMenu.classList.toggle("show");
-            return false;
-        };
         
+        //Startar om spelet
         restart = function () {
-            console.log("this: " + this);
-            console.log("that: " + that.windowBody.innerHTML);
             that.windowBody.innerHTML = "";
             firstCell = null;
             secondCell = null;
@@ -65,6 +63,7 @@
             init();
         };
         
+        //Val av storlek på spelbräde
         toolBarEditMenuSetBoard.onclick = function () {
             var innermodal = document.createElement("section"),
                 radio2x4 = document.createElement("input"),
@@ -123,19 +122,8 @@
         toolBarEdit.appendChild(toolBarEditMenu);
 
         this.windowToolBar.appendChild(toolBarEdit);
-        
-        
-//        KLOS.init = function () {
-//        boardSizeX = 4;
-//        boardSizeY = 4;
-//        firstCell = null;
-//        secondCell = null;
-//        tries = 0;
-//        foundPairs = 0;
-//        };
-        
-//        cellArray = KLOS.Memory.RandomGenerator.getPictureArray(boardSizeY, boardSizeX);
-        
+
+        //Logik för cell (spelbricka)
         Cell = function (cellValue) {
             var index;
             this.isShown = false;
@@ -149,20 +137,13 @@
                 document.querySelectorAll("#memory" + boardId + " img")[index].setAttribute("src", "pics/0.png");
             };
         };
-        
-//        cells = [];
-//        
-//        cellArray.forEach(function (value) {
-//            cells.push(new Cell(value));
-//        });
-        
-        //Gömmer celler med fördröjning
+
+        //Gömmer celler efter fördröjning
         hideCells = function () {
             cells[firstCell].isShown = false;
             cells[secondCell].isShown = false;
             cells[firstCell].hide(firstCell);
             cells[secondCell].hide(secondCell);
-    //        renderGameBoard();
             firstCell = null;
             secondCell = null;
         };
@@ -181,7 +162,6 @@
                 if (tries === 0 && foundPairs === 0 && firstCell === null) {
                     startTime = Date.now();
                 }
-    //            cells[index].show(index);
                 
                 //Kontrollera att onclick objektet inte redan visas
                 if (cells[index].isShown === true) {
@@ -227,6 +207,8 @@
                     stopTime = Date.now();
                     resultTime = (stopTime - startTime) / 1000;
                     results.innerHTML = "";
+                    
+                    //Om ny rekordtid, spara i localstorage och skicka till servern
                     if (resultTime < recordTime) {
                         localStorage.memoryBestTime = resultTime;
                         results.innerHTML += "Rekordtid! ";
@@ -234,12 +216,14 @@
                         socket.emit('highscoretime', KLOS.username, resultTime);
                     }
                 
+                    //Om rekord, spara i localstorage och meddela servern
                     if (tries < recordTries) {
                         localStorage.memoryBestTries = tries;
                         results.innerHTML += "Rekord! minsta antal försök. ";
                         socket.emit("highscoretries", KLOS.username, tries);
                     }
                         
+                    //Presenterar resultat för spelomgången
                     results.innerHTML += "Misslyckade: " + tries + ", tid: " + resultTime;
                 }
             };
@@ -263,8 +247,10 @@
             
             cellIndex = 0;
             
+            //Rader..
             for (rows = 0; rows < boardSizeY; rows += 1) {
                 trTag = document.createElement("tr");
+                //Kolumner..
                 for (cols = 0; cols < boardSizeX; cols += 1) {
                     tdTag = document.createElement("td");
     
@@ -274,19 +260,13 @@
                 }
                 tableTag.appendChild(trTag);
             }
-            
 
-
-
-            
-
-            
-            
             gameBoard = document.querySelector("#memory" + boardId + " section.gameBoard");
             gameBoard.innerHTML = "";
             gameBoard.appendChild(tableTag);
         };
         
+        //Renderar spelfönster
         renderGame = function () {
             var containerTag, gameBoardTag, resultsBoardTag, highscoreResults, highscoreTries, highscoreTime,
                 bestTime = localStorage.memoryBestTime || 9999,
@@ -295,7 +275,6 @@
             containerTag = document.createElement("article");
             containerTag.setAttribute("class", "memoryContainer");
             containerTag.setAttribute("id", "memory" + boardId);
-    //        containerTag.textContent = "Memory";
             
             gameBoardTag = document.createElement("section");
             gameBoardTag.setAttribute("class", "gameBoard");
@@ -313,16 +292,22 @@
             highscoreTries.textContent = "Misslyckade försök: " + bestTries;
             highscoreTime.textContent = "Tid: " + bestTime;
             
+            //Tar emot bästa tid som följd av att memoryload körts
             socket.on("memorytime", function (data) {
                 highscoreTime.textContent = "Tid: " + data;
             });
+            
+            //Ändrar bästa tid om någon annan klient slår rekordet
             socket.on("newrecordtime", function (data) {
                 highscoreTime.textContent = "Tid: " + data;
             });
             
+            //Bästa resultat som följd av memoryload
             socket.on("memoryscore", function (data) {
                 highscoreTries.textContent = "Misslyckade försök: " + data;
             });
+            
+            //Ändrar om någon slår rekordet medan programmet är öppet
             socket.on("newrecordscore", function (data) {
                 highscoreTries.textContent = "Misslyckade försök: " + data;
             });
@@ -337,13 +322,8 @@
             return containerTag;
         };
         
-    //    document.querySelector("main").appendChild(renderGame());
-//        this.windowBody.appendChild(renderGame());
-//        renderGameBoard();
         init();
         instanceReady = new KLOS.CustomEvent("instanceReady");
         this.fullWindow.dispatchEvent(instanceReady);
     };
 }(window.KLOS = window.KLOS || {}, window.io));
-
-//KLOS.inheritPrototype(KLOS.Memory, KLOS.WM);

@@ -2,6 +2,7 @@
 (function (KLOS) {
     "use strict";
     
+    //Platshållare för MineSweeper, hann inte implementeras
     KLOS.MineSweeper = function (menuButton) {
         KLOS.WM.call(this, "Mine Sweeper", menuButton);
         this.windowIcon.setAttribute("src", "img/minesweeper.png");
@@ -14,5 +15,4 @@
         instanceReady = new KLOS.CustomEvent("instanceReady");
         this.fullWindow.dispatchEvent(instanceReady);
     };
-
 }(window.KLOS = window.KLOS || {}));

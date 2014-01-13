@@ -2,6 +2,7 @@
 (function (KLOS) {
     "use strict";
     
+    //Programinstans för visning av rss feeds
     KLOS.RssReader = function (menuButton) {
         KLOS.WM.call(this, "RSS Reader", menuButton);
         this.windowIcon.setAttribute("src", "img/rss.png");
@@ -19,13 +20,7 @@
         toolBarEditMenuSetRSS.textContent = "Välj källa..";
         toolBarEditMenuUpdate.textContent = "Uppdatera nu";
         toolBarEditMenuUpdateFreq.textContent = "Uppdateringsfrekvens..";
-        
-        
-        toolBarEdit.onclick = function () {
-            toolBarEditMenu.classList.toggle("show");
-            return false;
-        };
-        
+
         toolBarEditMenuSetRSS.onclick = function () {
             changeFeed();
         };
@@ -49,9 +44,10 @@
         that = this;
         
 
-        
+        //Hämtning av feed via xhr
         getFeed = function () {
             var now = new Date();
+            //Timeout, efter 300ms läggs aktivitetsvisare i statusfält
             imageLoadTimer = setTimeout(function () {
                 activityImage = document.createElement("img");
                 activityImage.setAttribute("src", "img/activity.gif");
@@ -63,35 +59,43 @@
             
             xhr = KLOS.XhrCon("http://homepage.lnu.se/staff/tstjo/labbyServer/rssproxy/?url=" + escape(url), function (data) {
                 that.windowBody.innerHTML = data;
+                //Ta bort timeout för aktivitetsvisare, trist om den läggs på efter borttagning
                 clearTimeout(imageLoadTimer);
                 
+                //Text för senaste uppdatering i statusfält
                 lastUpdate.textContent = now.toLocaleTimeString();
                 
+                //Tar bort aktivitetsvisaren om den laddats i statusfältet
                 if (that.windowStatusBar.contains(activityImage)) {
                     that.windowStatusBar.removeChild(activityImage);
                 }
                 
+                //Tar bort visning av senaste uppdatering om den finns
                 if (that.windowStatusBar.contains(lastUpdate)) {
                     that.windowStatusBar.removeChild(lastUpdate);
                 }
                 
+                //Lägger till information för senaste uppdatering i statusfältet
                 that.windowStatusBar.appendChild(lastUpdate);
                 
             });
         };
         
+        //Ställer uppdateringsfrekvens för hämtning av feed
         setUpdate = function (updateTimer) {
+            //Ta bort föregående timer så att det inte blir flera interval
             clearInterval(feedUpdate);
             feedUpdate = setInterval(getFeed, updateTimer * 60000);
         };
         
+        //Hämtar feed
         getFeed(url);
+        
+        //Sätter uppdateringsfrekvens till 1 minut
         setUpdate(1);
         
+        //Hanterar val av feed som ska hämtas
         changeFeed = function () {
-//            url = prompt("välj feed");
-//            console.log(getFeed);
-//            getFeed(url);
             var pTag = document.createElement("p"),
                 radioLH = document.createElement("input"),
                 feedChooser = document.createElement("form"),
@@ -137,18 +141,23 @@
                 e.preventDefault();
                 var i;
 
+                //Loopar igenom inputfält för att se vilket som är valt
                 for (i = 0; i < feedChooser.feed.length; i += 1) {
                     if (feedChooser.feed[i].checked === true) {
+                        //Om det valda fältet är custom fältet ska värdet från textrutan läsas in och användas
                         if (feedChooser.feed[i].value === "custom") {
                             url = textboxCustom.value;
+                        //Annars hämtas värdet från den radiobox som är vald
                         } else {
                             url = feedChooser.feed[i].value;
                         }
                     }
                 }
                 
-                
+                //Hämta feed för vald url
                 getFeed(url);
+                
+                //Ta bort popup
                 KLOS.removeModal();
             };
             
@@ -162,10 +171,11 @@
             innerModal.appendChild(pTag);
             innerModal.appendChild(feedChooser);
             
+            //Visa popup
             KLOS.showModal(innerModal);
         };
         
-        
+        //Hanterar uppdateringsintervall
         setFeedUpdate = function () {
             var pTag = document.createElement("p"),
                 selectUpdate = document.createElement("select"),
@@ -211,6 +221,7 @@
             KLOS.showModal(innerModal);
         };
 
+        //Meddela KLOS.WM att programinstansen har laddats färdigt
         instanceReady = new KLOS.CustomEvent("instanceReady");
         this.fullWindow.dispatchEvent(instanceReady);
     };
