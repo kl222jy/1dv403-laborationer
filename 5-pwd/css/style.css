@@ -506,8 +506,7 @@ input[submit] {
   background-color: #227ebb;
   color: white;
   text-align: left;
-  padding-left: 10px;
-  cursor: move; }
+  padding-left: 10px; }
 
 .window > section {
   background-color: white; }

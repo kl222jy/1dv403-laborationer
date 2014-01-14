@@ -272,6 +272,7 @@
                 width = parseInt(css.width, 10);
                 height = parseInt(css.height, 10);
                 
+                
                 left = offsetX + e.clientX;
                 top = offsetY + e.clientY;
                 
@@ -296,6 +297,7 @@
                 windowTop = top;
                 
                 updateWindow();
+                titleBar.style.cursor = "move";
             };
     
             //Aktiverar data från mousemove till move
@@ -308,11 +310,17 @@
                 KLOS.counter += 1;
                 updateWindow();
                 window.addEventListener("mousemove", move, false);
+                titleBar.style.cursor = "move";
+            };
+            
+            titleBar.onmouseover = function (e) {
+                titleBar.style.cursor = "pointer";
             };
             
             //Avaktiverar data från mousemove till move
             window.addEventListener("mouseup", function () {
                 window.removeEventListener("mousemove", move, false);
+                titleBar.style.cursor = "pointer";
             }, false);
 
             //Uppdatering av z-index för fönster vid klick

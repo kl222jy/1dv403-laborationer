@@ -17,6 +17,7 @@
         this.name = name;
         
         this.messages = [];
+        that = this;
     
         history = 50;
         updateTime = 10000;
@@ -26,6 +27,9 @@
         //Hämtar meddelanden
         getMessages = function (noUpdate) {
             //Timout, efter 300ms läggs aktivitetsvisare in i statusfältet
+            if (!KLOS.desktop.contains(that.windowBody)) {
+                return;
+            }
             imageLoadTimer = setTimeout(function () {
                 activityImage = document.createElement("img");
                 activityImage.setAttribute("src", "img/activity.gif");
@@ -105,7 +109,6 @@
         //Hämta meddelanden
         getMessages();
         
-        that = this;
         
         //Skicka meddelanden
         sendMessage = function (message) {
@@ -232,6 +235,7 @@
                 updateTime = selectUpdate.options[selectUpdate.selectedIndex].value * 1000;
                 getMessages(true);
                 KLOS.removeModal();
+                return false;
             };
             
             formUpdate.appendChild(selectUpdate);
@@ -255,7 +259,7 @@
                 formUpdate = document.createElement("form"),
                 setMessagesAmount = document.createElement("button");
                 
-            pTag.textContent = "Nedan kan du välja hur ofta meddelanden ska hämtas.";
+            pTag.textContent = "Nedan kan du välja hur många meddelanden som ska hämtas.";
             option10.setAttribute("value", "10");
             option10.textContent = "10 Meddelanden";
             option20.setAttribute("value", "20");
@@ -279,6 +283,7 @@
                 history = selectMessages.options[selectMessages.selectedIndex].value;
                 getMessages(true);
                 KLOS.removeModal();
+                return false;
             };
             
             formUpdate.appendChild(selectMessages);
@@ -307,6 +312,7 @@
                 //Här borde läggas till lite logik som kontrollerar inmatningen
                 saveSettings();
                 KLOS.removeModal();
+                return false;
             };
             
             setNameForm.appendChild(setNameTextbox);

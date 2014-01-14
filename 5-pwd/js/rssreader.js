@@ -56,6 +56,10 @@
                 that.windowStatusBar.appendChild(activityImage);
             }, 300);
             
+            if (!KLOS.desktop.contains(that.windowBody)) {
+                clearInterval(feedUpdate);
+                return;
+            }
             
             xhr = KLOS.XhrCon("http://homepage.lnu.se/staff/tstjo/labbyServer/rssproxy/?url=" + escape(url), function (data) {
                 that.windowBody.innerHTML = data;
